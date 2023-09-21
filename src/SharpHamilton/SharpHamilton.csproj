@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B2BFEA5D-3909-4CA3-8F18-901E2A0D557A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Huarui.STARLine</RootNamespace>
+    <AssemblyName>SharpHamilton</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <DocumentationFile>bin\Release\SharpHamilton.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Hamilton.HxSys3DView, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Hamilton.HxSys3DView\v4.0_4.4.0.7740__2dc916514a2d1b53\Hamilton.HxSys3DView.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Hamilton.HxVectorDB, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.HxVectorDB.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxCfgFil, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxCfgFil.dll</HintPath>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxCoreLiquid, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxCoreLiquid.dll</HintPath>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxGruCommand, Version=4.4.0.5029, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxGruCommand.dll</HintPath>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxLabwr3, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxLabwr3.dll</HintPath>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxParams, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxParams.dll</HintPath>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxReg, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxReg.dll</HintPath>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxSysDeck, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxSysDeck.dll</HintPath>
+    </Reference>
+    <Reference Include="Hamilton.Interop.HxTrace, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxTrace.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Component\Arm\Arm.cs" />
+    <Compile Include="Component\Arm\LeftArm.cs" />
+    <Compile Include="Component\Arm\RightArm.cs" />
+    <Compile Include="Component\Channel\AspirateMode.cs" />
+    <Compile Include="Component\Channel\Direction.cs" />
+    <Compile Include="Component\Channel\Parameter\AdvancedParameter.cs" />
+    <Compile Include="Component\Channel\Parameter\FixHeightParameter.cs" />
+    <Compile Include="Component\Channel\Parameter\IParameter.cs" />
+    <Compile Include="Component\Channel\Parameter\LiquidClassParameter.cs" />
+    <Compile Include="Component\Channel\Parameter\LLDParameter.cs" />
+    <Compile Include="Component\Channel\Parameter\SideTouchParameter.cs" />
+    <Compile Include="Component\Channel\Parameter\TouchOffParameter.cs" />
+    <Compile Include="Component\Channel\STARChannel.cs" />
+    <Compile Include="Component\Channel\CoreTipType.cs" />
+    <Compile Include="Component\Channel\PipettingParameter.cs" />
+    <Compile Include="Component\Channel\TADMUploadMode.cs" />
+    <Compile Include="Deck\ContainerShapes.cs" />
+    <Compile Include="Deck\DeckLayout.cs" />
+    <Compile Include="Deck\Container.cs" />
+    <Compile Include="Deck\LabwareAction.cs" />
+    <Compile Include="Deck\LabwareState.cs" />
+    <Compile Include="Deck\RackType.cs" />
+    <Compile Include="Component\Channel\DispenseMode.cs" />
+    <Compile Include="Component\Channel\LLDSensitivity.cs" />
+    <Compile Include="Deck\Segment.cs" />
+    <Compile Include="Deck\Site.cs" />
+    <Compile Include="Deck\Status.cs" />
+    <Compile Include="Error\Error.cs" />
+    <Compile Include="Error\ErrorRecoveryOptions.cs" />
+    <Compile Include="Error\FirmwareError.cs" />
+    <Compile Include="Error\IErrorInfo.cs" />
+    <Compile Include="Error\MainError.cs" />
+    <Compile Include="Error\ModuleErrorHandler.cs" />
+    <Compile Include="FirmwareException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="STARCommand.cs" />
+    <Compile Include="STARDiscover.cs" />
+    <Compile Include="STAREventHandler.cs" />
+    <Compile Include="STARException.cs" />
+    <Compile Include="StarRegistry.cs" />
+    <Compile Include="Error\RecoveryAction.cs" />
+    <Compile Include="StepReturn\StepResult.cs" />
+    <Compile Include="StepReturn\StepResultErrorFlag.cs" />
+    <Compile Include="StepRunData.cs" />
+    <Compile Include="StepStatusEnum.cs" />
+    <Compile Include="Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="HamHeaterShakerUSBLib">
+      <Guid>{049BFB82-42EA-4B5C-B1E1-CF27266FF1C6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="HXERRLib">
+      <Guid>{66777362-0990-11D1-8C7D-004095E12BC7}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="HXRS232COMLib">
+      <Guid>{AF0EF322-E844-11D3-ADDB-0004ACB1DCB2}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="HXTCPIPBDZCOMMLib">
+      <Guid>{952BF1F8-76A1-456F-8498-877A0DC0EFE4}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="HXUSBCOMMLib">
+      <Guid>{5DC89E45-D7A7-40E5-B65C-8085F448AC21}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="key.pfx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
