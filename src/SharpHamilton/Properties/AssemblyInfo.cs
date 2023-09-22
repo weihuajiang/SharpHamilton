@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("STARLine")]
-[assembly: AssemblyDescription("Huarui Driver for Hamlton STAR Line")]
+[assembly: AssemblyDescription("Driver for Hamlton STAR Line")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Huarui Automation Techonolgy Ltd Co")]
-[assembly: AssemblyProduct("Huarui Driver for Hamlton STAR Line")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCompany("Huarui Robotics")]
+[assembly: AssemblyProduct("Driver for Hamlton STAR Line")]
+[assembly: AssemblyCopyright("Copyright © Huarui Robotics 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
