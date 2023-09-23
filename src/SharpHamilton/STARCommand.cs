@@ -1075,9 +1075,8 @@ namespace Huarui.STARLine
                 }
                 Util.ReleaseComObject(tipStatus);
             }
-
             FormatTrace(instrumentName, stepName, (StepStatusEnum)(stepStatus - 1), details);
-            
+
             object obj = new object();
             if(pars.LookupItem1(HxTraceFormatKeys.errorObject, out obj))
             {
@@ -1086,6 +1085,7 @@ namespace Huarui.STARLine
                     IErrorInfo eobj = obj as IErrorInfo;
                     string dess = "";
                     eobj.GetDescription(out dess);
+                    ReleaseComObject(pHxPars);
                     throw new Exception(dess);
                 }
             }
