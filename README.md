@@ -79,19 +79,8 @@ ML_STAR.End();
 venus-styled error handling. If recovery was set to cancel, the error will be throwed as STARException
 ```csharp
 ErrorRecoveryOptions options = new ErrorRecoveryOptions();
-options.Add(MainErrorEnum.NoTipError, new ErrorRecoveryOption() { Recovery = RecoveryAction.Cancel });
-options.Add(MainErrorEnum.NotExecutedError, new ErrorRecoveryOption() { Recovery = RecoveryAction.Cancel });
-try
-{
-  ML_STAR.Channel.PickupTip(cnts, options);
-}
-catch (STARException e)
-{
-  foreach (ModuleError err in e.ModuleErrors)
-  {
-    Console.WriteLine(err.Module + " " + err.MainError + ":" + err.SlaveError + " " + err.LabwareId + ", " + err.PositionId);
-  }
-}
+options.Add(MainErrorEnum.InsufficientLiquidError, new ErrorRecoveryOption() { Recovery = RecoveryAction.Bottom });
+ML_STAR.Channel.Aspirate(smples, 150, aspParam, AspirateMode.Aspiration, options);
 ```
 get last liquid level and compute its volume
 ```csharp
@@ -101,6 +90,10 @@ for(int i = 0; i < ML_STAR.Channel.Count; i++)
     var volume = samples[i].ComputeVolume(levels[i] - samples[i].Z);
     Console.WriteLine($"volume for sample {samples[i].Position} is {volume}");
 }
+```
+set tip tracking speed
+```csharp
+ML_STAR.Channel.SetTipTrackSpeed(2);
 ```
 turn on anti-droplet control and clot detection with MAD
 ```csharp

@@ -52,10 +52,6 @@ namespace Demo
                 //ML_STAR.Autoload.LoadCarrier(ML_STAR.Deck["Tip"]);//load tip rack
                 //ML_STAR.Autoload.LoadCarrier(ML_STAR.Deck["Smp"]);//load sample rack
 
-                //venus-styled error handling
-                ErrorRecoveryOptions options = new ErrorRecoveryOptions();
-                options.Add(MainErrorEnum.NoTipError, new ErrorRecoveryOption() { Recovery = RecoveryAction.Next });
-                options.Add(MainErrorEnum.NotExecutedError, new ErrorRecoveryOption() { Recovery = RecoveryAction.Repeat });
                 ML_STAR.Channel.PickupTip(tips);
 
                 //aspiration
@@ -63,7 +59,10 @@ namespace Demo
                 aspParam.LiquidClassParameter.TipType = CoreTipType.HighVolumeTip;
                 aspParam.LiquidClassParameter.DispenseMode = DispenseMode.JetEmpty;
                 aspParam.LiquidClassParameter.LiquidClass = "HighVolume_Water_DispenseJet_Empty";
-                ML_STAR.Channel.Aspirate(smples, 150, aspParam);
+                //venus-styled error handling
+                ErrorRecoveryOptions options = new ErrorRecoveryOptions();
+                options.Add(MainErrorEnum.InsufficientLiquidError, new ErrorRecoveryOption() { Recovery = RecoveryAction.Bottom });
+                ML_STAR.Channel.Aspirate(smples, 150, aspParam, AspirateMode.Aspiration, options);
 
                 //dispense
                 var dispParam = new FixHeightParameter() { FixHeight = 30 };
@@ -71,12 +70,12 @@ namespace Demo
                 dispParam.LiquidClassParameter.DispenseMode = DispenseMode.JetEmpty;
                 dispParam.LiquidClassParameter.LiquidClass = "HighVolume_Water_DispenseJet_Empty";
                 ML_STAR.Channel.Dispense(smples, 150, dispParam);
-
+                
                 ML_STAR.Channel.EjectTip();
                 ML_STAR.End();
                 ML_STAR.Dispose();
                 ML_STAR = null;
-                button1.Enabled = false;
+                button1.Enabled = true;
             });
         }
     }
