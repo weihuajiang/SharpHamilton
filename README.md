@@ -5,11 +5,16 @@ C# library to control Hamilton STAR line.
 
 With SharpHamilton, application which used Hamilton STAR line can be developed with totally C# code, instead of method/hsl and C# code of application software. Which can make programming and maintenance much easier.
 
+
 >**Limitation**
 >This library was only tested in Venus 4.4.
 
 >**Disclaimer**
 >SharpHamilton is not officially endorsed or supported by the Hamilton Company. Please used it for test only.
+
+## Document
+
+[Document online available](https://weihuajiang.github.io/SharpHamiltonDoc/)
 
 ## Features
 
