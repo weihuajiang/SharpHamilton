@@ -12,6 +12,10 @@ With SharpHamilton, application which used Hamilton STAR line can be developed w
 >**Disclaimer**
 >SharpHamilton is not officially endorsed or supported by the Hamilton Company. Please used it for test only.
 
+## Why did we develop
+
+To simplify application development with Hamilton STAR line. [Read more](WHY.md)
+
 ## Document
 
 [Document online available](https://weihuajiang.github.io/SharpHamiltonDoc/)
@@ -22,7 +26,7 @@ With SharpHamilton, application which used Hamilton STAR line can be developed w
 * No dependency without method or hsl file
 * Support venus-styled error handling
 * Support fully manipulation of deck layout, rack and container
-* Low cost and high performance for no HxRun running and no RPC communiation between application and COM in HxRun
+* Low cost and high performance for no HxRun running and no inter process communiation between application and COM in HxRun
 * Run in windows xp/7/10/11
 
 ## Progress
