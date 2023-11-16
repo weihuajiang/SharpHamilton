@@ -12,7 +12,7 @@ With SharpHamilton, application which used Hamilton STAR line can be developed w
 >**Disclaimer**
 >SharpHamilton is not officially endorsed or supported by the Hamilton Company. Please used it for test only.
 
-## Why did we develop
+## Why did we developed it?
 
 To simplify application development with Hamilton STAR line. [Read more](WHY.md)
 
@@ -36,7 +36,6 @@ To simplify application development with Hamilton STAR line. [Read more](WHY.md)
 * **Channel**: Tip pickup, tip eject, aspirate, dispense, move, get last liquid level, set tip tracking speed, get exclude state, wait for TADM upload, ADC/MAD control
 * **CORE-gripper** (under development)
 * **Autoload** (under development)
-* **CORE-gripper** (under development)
 * **5ml Channel** (under development)
 * **5ml CORE-gripper** (under development)
 * **iSWAP** (under development)
@@ -109,3 +108,9 @@ turn on anti-droplet control and clot detection with MAD
 ML_STAR.Channel.AntiDropletControl = true;
 ML_STAR.Channel.AspirationMonitoring = true;
 ```
+
+## 3D Simulation (under development)
+
+<video controls autoplay="true" preload="auto">
+	<source src="https://weihuajiang.github.io/LabAutomation/STAR/runSim.mp4" type="video/mp4" />
+</video>
