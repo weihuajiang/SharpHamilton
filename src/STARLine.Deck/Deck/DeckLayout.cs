@@ -1,12 +1,14 @@
 ﻿using Hamilton.Interop.HxCfgFil;
 using Hamilton.Interop.HxLabwr3;
 using Hamilton.Interop.HxParams;
+using Hamilton.Interop.HxSysDeck;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Media.Media3D;
 
 namespace Huarui.STARLine
 {
@@ -122,7 +124,7 @@ namespace Huarui.STARLine
         /// <summary>
         /// Rack Z base position
         /// </summary>
-        public double Z { get; internal set; }
+        public double Z { get;  set; }
         /// <summary>
         /// Rack width in x
         /// </summary>
@@ -147,6 +149,8 @@ namespace Huarui.STARLine
         /// Image file of rack
         /// </summary>
         public string ImageFile { get; internal set; }
+
+        public ModelData Model { get; set; }
         /// <summary>
         /// background color of rack
         /// </summary>
@@ -163,6 +167,10 @@ namespace Huarui.STARLine
         /// object for developer to store information
         /// </summary>
         public object Tag { get; set; }
+        /// <summary>
+        /// template file of deck layout
+        /// </summary>
+        public string DeckFileName { get; private set; } = null;
         /// <summary>
         /// find rack or child rack with labware id
         /// </summary>
@@ -210,8 +218,12 @@ namespace Huarui.STARLine
                 Site site = Sites[id];
                 if (site.Racks.Contains(rack))
                 {
-                    widthNumOfTrack = int.Parse(id.Substring(0, id.IndexOf("T-")));
-                    return int.Parse(id.Substring(id.IndexOf("-") + 1));
+                    try
+                    {
+                        widthNumOfTrack = int.Parse(id.Substring(0, id.IndexOf("T-")));
+                        return int.Parse(id.Substring(id.IndexOf("-") + 1));
+                    }
+                    catch { }
                 }
             }
             return -1;
@@ -632,6 +644,14 @@ namespace Huarui.STARLine
                 Rack r = new Rack();
                 r.ID = labwareId;
                 object labware = dl6.Labware[labwareId];
+                if(labware is ILabware7 labw7)
+                {
+                    string model="";
+                    double x=0, y=0, z=0;
+                    labw7.Get3DModel(ref model, ref x, ref y, ref z);
+                    r.Model = new ModelData() { File = model, Offset = new Point3D(x, y, z) };
+                    r.ImageFile = labw7.BitmapFile;
+                }
                 ITemplate tmp = labware as ITemplate;
                 if (tmp != null)
                 {
@@ -654,12 +674,31 @@ namespace Huarui.STARLine
                     }
                     ReleaseComObject(sites);
                     Rack prack = InstrumentLayout[templateId];
-                    Site site = prack.Sites[siteId];
-                    r.X = site.X;
-                    r.Y = site.Y;
-                    r.Z = site.Z;
-                    r.Width = site.Width;
-                    r.Depth = site.Depth;
+                    if (!string.IsNullOrEmpty(siteId))
+                    {
+                        Site site = prack.Sites[siteId];
+                        r.X = site.X;
+                        r.Y = site.Y;
+                        r.Z = site.Z;
+                        r.Width = site.Width;
+                        r.Depth = site.Depth;
+                    }
+                    else
+                    {
+                        var obj = labware as ILabware7;
+                        HxPars position = new HxPars();
+                        obj.GetDeckPosition("", position);
+                        r.X = position.Item1("Labwr_XCoord");
+                        r.Y = position.Item1("Labwr_YCoord");
+                        r.Z = position.Item1("Labwr_ZCoord");
+                        var eobj = labware as IEditLabware6;
+                        double w = 0, h = 0;
+                        eobj.GetExtent(ref w, ref h, "");
+                        r.Width = w;
+                        r.Depth = h;
+                        r.Height = 0;
+                    }
+                    //ITemplateDeckData.GetLabwareData 可以获取template上的rack
                 }
                 
                 IRectRack5 rr5 = labware as IRectRack5;
@@ -671,7 +710,6 @@ namespace Huarui.STARLine
                     HxPars pos = new HxPars();
                     Dictionary<string, Container> file2Cnt = new Dictionary<string, Container>();
                     rr5.GetRackPositionData(pos);
-
                     foreach (IHxPar p in (pos.Item("Labwr_PosData") as IHxPars))
                     {
                         string poistion = p.Key;
@@ -690,6 +728,14 @@ namespace Huarui.STARLine
                         try { clearance = cnt.Item("Labwr_ZClearance"); } catch (Exception e) { }
                         int shape = cnt.Item("Labwr_Shape");
                         string file = cnt.Item("Labwr_File");
+                        string model = "";
+                        Point3D offset = new Point3D();
+                        try
+                        {
+                            model = cnt.Item("Labwr_3DModelFile");
+                            offset = new Point3D(cnt.Item("Labwr_3DxOffset"), cnt.Item("Labwr_3DyOffset"), cnt.Item("Labwr_3DzOffset"));
+                        }
+                        catch { }
                         //load container segment
                         Container c = new Container()
                         {
@@ -704,7 +750,8 @@ namespace Huarui.STARLine
                             Shape = (Shape)shape,
                             File = file,
                             LiquidSeekingStartPosition = liquidSeeking,
-                            Clearance = clearance
+                            Clearance = clearance,
+                            Model=new ModelData() { File=model, Offset=offset}
                         };
                         if (!file2Cnt.ContainsKey(file))
                         {
@@ -736,7 +783,11 @@ namespace Huarui.STARLine
                     double rwith = rect.Item("Labwr_XDim");
                     double rdepth = rect.Item("Labwr_YDim");
                     double rheight = rect.Item("Labwr_ZDim");
-                    double rrotation = 0;// rect.Item("Labwr_Rotation");
+                    double rx2 = rect.Item("Labwr_Bndry2X")-rx;
+                    double ry2 = rect.Item("Labwr_Bndry2Y")-ry;
+                    double rrotation = 0;
+                    rrotation = -Math.Atan2(ry2, rx2) * 180 / Math.PI;
+                    //Console.WriteLine(r.ID + ": " + rx2 + ", " + ry2+" = "+rrotation);
                     r.X = rx;
                     r.Y = ry;
                     r.Z = rz;
@@ -746,6 +797,10 @@ namespace Huarui.STARLine
                     r.Rotation = rrotation;
                     r.ImageFile = rect.Item("Labwr_BitmapFile");
                     r.Color = rect.Item("Labwr_Color");
+                    //load 3D data
+                    r.Model = new ModelData();
+                    r.Model.File = rect.Item("Labwr_3DModelFile");
+                    r.Model.Offset = new Point3D(rect.Item("Labwr_3DxOffset"), rect.Item("Labwr_3DyOffset"), rect.Item("Labwr_3DzOffset"));
                     ReleaseComObject(rect);
                 }
                 else
@@ -777,7 +832,8 @@ namespace Huarui.STARLine
                                     FileInfo f = new FileInfo(r.File);
                                     r.ImageFile = Path.GetFullPath(f.Directory.FullName + "\\" + image);
                                 }
-                            }                            
+                            }
+                            r.Height = cfg.GetDataDefValueAsDouble("TEMPLATE", "default", "Dim.Dz");
                             ReleaseComObject(cfg);
                         }
                     }
@@ -819,9 +875,18 @@ namespace Huarui.STARLine
                 
             }
         }
-        internal static Rack GetLayout(IDeckLayout6 dl6)
+        public static Rack GetLayout(string decklayoutFile, string instrumentName)
+        {
+
+            var systemDeck = new SystemDeck();
+            systemDeck.InitSystemFromFile(decklayoutFile);
+            var layout = systemDeck.GetInstrumentLayout(instrumentName, null);
+            return GetLayout(layout);
+        }
+        public static Rack GetLayout(IDeckLayout6 dl6)
         {
             Rack InstrumentLayout = new Rack(dl6);
+            InstrumentLayout.DeckFileName = dl6.DeckFileName;
 
             IDeckData td = dl6 as IDeckData;
             HxPars obj = new HxPars();

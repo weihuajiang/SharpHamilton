@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Huarui.STARLine</RootNamespace>
-    <AssemblyName>SharpHamilton</AssemblyName>
+    <AssemblyName>Huarui.STARLine</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -32,7 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <DocumentationFile>bin\Release\SharpHamilton.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Huarui.STARLine.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
@@ -116,18 +116,10 @@
     <Compile Include="Component\Channel\STARChannel.cs" />
     <Compile Include="Component\Channel\CoreTipType.cs" />
     <Compile Include="Component\Channel\PipettingParameter.cs" />
+    <Compile Include="Component\Channel\STARChannelEx.cs" />
     <Compile Include="Component\Channel\TADMUploadMode.cs" />
-    <Compile Include="Deck\ContainerShapes.cs" />
-    <Compile Include="Deck\DeckLayout.cs" />
-    <Compile Include="Deck\Container.cs" />
-    <Compile Include="Deck\LabwareAction.cs" />
-    <Compile Include="Deck\LabwareState.cs" />
-    <Compile Include="Deck\RackType.cs" />
+    <Compile Include="Component\Orbit\OrbitBarcodeReader.cs" />
     <Compile Include="Component\Channel\DispenseMode.cs" />
-    <Compile Include="Component\Channel\LLDSensitivity.cs" />
-    <Compile Include="Deck\Segment.cs" />
-    <Compile Include="Deck\Site.cs" />
-    <Compile Include="Deck\Status.cs" />
     <Compile Include="Error\Error.cs" />
     <Compile Include="Error\ErrorRecoveryOptions.cs" />
     <Compile Include="Error\FirmwareError.cs" />
@@ -136,6 +128,7 @@
     <Compile Include="Error\ModuleErrorHandler.cs" />
     <Compile Include="FirmwareException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Simulator\IProtoclSimulator.cs" />
     <Compile Include="STARCommand.cs" />
     <Compile Include="STARDiscover.cs" />
     <Compile Include="STAREventHandler.cs" />
@@ -196,7 +189,12 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <ProjectReference Include="..\STARLine.Deck\STARLine.Deck.csproj">
+      <Project>{219fd9ac-69ed-4f66-8ff8-6a53a40ea584}</Project>
+      <Name>STARLine.Deck</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="key.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

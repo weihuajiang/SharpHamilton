@@ -94,6 +94,10 @@ namespace Huarui.STARLine
         /// </summary>
         public List<Segment> Segments { get; internal set; } = new List<Segment>();
         /// <summary>
+        /// Model information
+        /// </summary>
+        public ModelData Model { get; set; }
+        /// <summary>
         /// object for developer to store someinformation 
         /// </summary>
         public object Tag { get; set; }
@@ -112,9 +116,26 @@ namespace Huarui.STARLine
             cfg.LoadFile(File);
             cnt.InitFromCfgFil(cfg);
             double v= cnt.ComputContainerVolumeForHt(height);
-            Util.ReleaseComObject(cfg);
-            Util.ReleaseComObject(cnt);
+            ReleaseComObject(cfg);
+            ReleaseComObject(cnt);
             return v;
+        }
+
+        static void ReleaseComObject(object obj)
+        {
+            if (obj == null)
+                return;
+            /*
+            int count = 0;
+            while ((Marshal.ReleaseComObject(obj)) > 0) ;
+            {
+                count++;
+                if (count > 1000)
+                    return;
+            }
+            */
+            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(obj);
+            obj = null;
         }
     }
 }

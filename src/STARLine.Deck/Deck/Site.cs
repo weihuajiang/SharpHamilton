@@ -10,6 +10,16 @@ namespace Huarui.STARLine
     /// </summary>
     public class Site
     {
+        public Site() { }
+        public Site(string id, double x, double y, double z, double width, double depth)
+        {
+            Id = id;
+            X = x;
+            Y = y;
+            Z = z;
+            Width = width;
+            Depth = depth;
+        }
         /// <summary>
         /// Site Id
         /// </summary>

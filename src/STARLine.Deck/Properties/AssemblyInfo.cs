@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("STARLine")]
-[assembly: AssemblyDescription("Driver for Hamlton STAR Line")]
+[assembly: AssemblyTitle("STARLine.Deck")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Huarui Robotics")]
-[assembly: AssemblyProduct("Driver for Hamlton STAR Line")]
-[assembly: AssemblyCopyright("Copyright © Huarui Robotics 2019")]
+[assembly: AssemblyCompany("HP Inc.")]
+[assembly: AssemblyProduct("STARLine.Deck")]
+[assembly: AssemblyCopyright("Copyright © HP Inc. 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b2bfea5d-3909-4ca3-8f18-901e2a0d557a")]
+[assembly: Guid("219fd9ac-69ed-4f66-8ff8-6a53a40ea584")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

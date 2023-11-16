@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Hamilton STAR line integration SDK
@@ -79,6 +80,11 @@ namespace Huarui.STARLine
         /// Deck layout
         /// </summary>
         public Rack Deck { get; private set; }
+
+        /// <summary>
+        /// simulator for STAR control
+        /// </summary>
+        public IProtoclSimulator Simulator { get; set; } = null;
 
         //Error handling to get the error
         internal Dictionary<int, ModuleErrors> Errors = new Dictionary<int, ModuleErrors>();
@@ -238,7 +244,6 @@ namespace Huarui.STARLine
             }
             methodEnded = false;
             MlSTAR.StartMethod();
-
             //get arm information
             string reply = SendFirmware("C0UA","");
             string[] values = reply.Substring(reply.IndexOf("ua") + 2).Split(' ');
@@ -255,12 +260,14 @@ namespace Huarui.STARLine
             LeftArm.MaximalPosition = int.Parse(positions[1]) / 10.0;
             RightArm.MinimalPosition = int.Parse(positions[2]) / 10.0;
             RightArm.MaximalPosition = int.Parse(positions[3]) / 10.0;
+            if (IsSimulation) Simulator?.Start(this);
         }
         /// <summary>
         /// End instrument control
         /// </summary>
         public void End()
         {
+            if (IsSimulation) Simulator?.End();
             MlSTAR.EndMethod();
             DateTime timeout = DateTime.Now.AddSeconds(20);
             while (!methodEnded)
@@ -649,6 +656,7 @@ namespace Huarui.STARLine
                 return inited == 1;
             }
         }
+        bool? _isSimulation;
         /// <summary>
         /// Is instrument controlled in simulation
         /// </summary>
@@ -657,7 +665,11 @@ namespace Huarui.STARLine
             get
             {
                 if (MlSTAR != null)
-                    return (MlSTAR as IHxCommandEdit5).GetValueWithKey(18) == 1;
+                {
+                    if(_isSimulation==null)
+                     _isSimulation= (MlSTAR as IHxCommandEdit5).GetValueWithKey(18) == 1;
+                    return _isSimulation.Value;
+                }
                 return false;
             }
         }
@@ -796,7 +808,10 @@ namespace Huarui.STARLine
             try
             {
                 ClearErrorForTask(masterTask);
+                Task iniTask = null;
+                if (Simulator!=null && IsSimulation) iniTask=Simulator.Initialize();
                 HxPars result = srd.Command.Run(InstrumentName, instanceId, masterTask, objBounds) as HxPars;
+                if (iniTask != null) iniTask.Wait();
                 ReleaseComObject(result);
                 StepRunCfg.DeleteDataDef("HxPars", instanceId);
             }
@@ -835,12 +850,15 @@ namespace Huarui.STARLine
             string fwResult;
             try
             {
+                Task fwTask = null;
+                if (Simulator != null && IsSimulation) fwTask = Simulator.SendFirmware(cmd, parameter);
                 ClearErrorForTask(taskId);
                 HxPars result = new HxPars();
                 MlSTAR.FirmwareCommand(usedVariable, result);
                 fwResult = result.Item2(HxCommandKeys.resultData, 4);
                 ReleaseComObject(result);
                 //StepRunCfg.DeleteDataDef("HxPars", instanceId);
+                if (fwTask != null) fwTask.Wait();
             }
             catch (Exception e)
             {
@@ -1075,8 +1093,9 @@ namespace Huarui.STARLine
                 }
                 Util.ReleaseComObject(tipStatus);
             }
-            FormatTrace(instrumentName, stepName, (StepStatusEnum)(stepStatus - 1), details);
 
+            FormatTrace(instrumentName, stepName, (StepStatusEnum)(stepStatus - 1), details);
+            
             object obj = new object();
             if(pars.LookupItem1(HxTraceFormatKeys.errorObject, out obj))
             {
@@ -1085,7 +1104,6 @@ namespace Huarui.STARLine
                     IErrorInfo eobj = obj as IErrorInfo;
                     string dess = "";
                     eobj.GetDescription(out dess);
-                    ReleaseComObject(pHxPars);
                     throw new Exception(dess);
                 }
             }

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Huarui.STARLine
 {
@@ -143,11 +144,16 @@ namespace Huarui.STARLine
             _command.SaveRunParameter(usedVariable, instanceId);
             try
             {
+                Task chnTask = null;
+                if (_command.Simulator != null && _command.Simulator.Channel1000 != null && _command.IsSimulation)
+                    chnTask = _command.Simulator.Channel1000.PickupTips(tips);
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, channelTask, objBounds) as HxPars;
                 Util.ReleaseComObject(result);
                 _command.DeleteRunParameter(instanceId);
                 _command.HxInstrumentDeck.DeleteSequence(PXSequence);
+
+                if (chnTask != null) chnTask.Wait();
             }
             catch (Exception e)
             {
@@ -244,11 +250,17 @@ namespace Huarui.STARLine
             _command.SaveRunParameter(usedVariable, instanceId);
             try
             {
+                Task chnTask = null;
+                if (_command.Simulator != null && _command.Simulator.Channel1000 != null && _command.IsSimulation)
+                    chnTask = _command.Simulator.Channel1000.EjectTips(tips);
+
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, channelTask, objBounds) as HxPars;
                 Util.ReleaseComObject(result);
                 _command.DeleteRunParameter(instanceId);
                 _command.HxInstrumentDeck.DeleteSequence(PXSequence);
+
+                if (chnTask != null) chnTask.Wait();
             }
             catch (Exception e)
             {
@@ -306,10 +318,16 @@ namespace Huarui.STARLine
             _command.SaveRunParameter(usedVariable, instanceId);
             try
             {
+                Task chnTask = null;
+                if (_command.Simulator != null && _command.Simulator.Channel1000 != null && _command.IsSimulation)
+                    chnTask = _command.Simulator.Channel1000.EjectTips();
+
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, channelTask, objBounds) as HxPars;
                 Util.ReleaseComObject(result);
                 _command.DeleteRunParameter(instanceId);
+
+                if (chnTask != null) chnTask.Wait();
             }
             catch (Exception e)
             {
@@ -634,11 +652,17 @@ namespace Huarui.STARLine
             _command.SaveRunParameter(usedVariable, instanceId);
             try
             {
+                Task chnTask = null;
+                if (_command.Simulator != null && _command.Simulator.Channel1000 != null && _command.IsSimulation)
+                    chnTask = _command.Simulator.Channel1000.Pipette(cnts, 5, 5);
+
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, channelTask, objBounds) as HxPars;
                 Util.ReleaseComObject(result);
                 _command.HxInstrumentDeck.DeleteSequence(PXSequence);
                 _command.DeleteRunParameter(instanceId);
+
+                if (chnTask != null) chnTask.Wait();
             }
             catch (Exception e)
             {
@@ -966,11 +990,17 @@ namespace Huarui.STARLine
             _command.SaveRunParameter(usedVariable, instanceId);
             try
             {
+                Task chnTask = null;
+                if (_command.Simulator != null && _command.Simulator.Channel1000 != null && _command.IsSimulation)
+                    chnTask = _command.Simulator.Channel1000.Pipette(cnts, 0, -5);
+
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, 2, objBounds) as HxPars;
                 Util.ReleaseComObject(result);
                 _command.HxInstrumentDeck.DeleteSequence(PXSequence);
                 _command.DeleteRunParameter(instanceId);
+
+                if (chnTask != null) chnTask.Wait();
             }
             catch (Exception e)
             {

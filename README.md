@@ -109,6 +109,21 @@ ML_STAR.Channel.AntiDropletControl = true;
 ML_STAR.Channel.AspirationMonitoring = true;
 ```
 
+## Fix WinForm control size changed when using SharpHamilton
+
+disable the auto-resizing feature, add following code to app.confg
+```
+<configuration>
+  <!-- ... other xml settings ... -->
+
+  <System.Windows.Forms.ApplicationConfigurationSection>
+    <add key="DpiAwareness" value="PerMonitorV2" />
+    <add key="EnableWindowsFormsHighDpiAutoResizing" value="false" />
+  </System.Windows.Forms.ApplicationConfigurationSection>
+
+</configuration>
+```
+
 ## 3D Simulation (under development)
 
 
