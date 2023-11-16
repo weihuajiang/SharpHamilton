@@ -111,6 +111,6 @@ ML_STAR.Channel.AspirationMonitoring = true;
 
 ## 3D Simulation (under development)
 
-<video controls autoplay="true" preload="auto">
-	<source src="https://weihuajiang.github.io/LabAutomation/STAR/runSim.mp4" type="video/mp4" />
-</video>
+
+https://github.com/weihuajiang/SharpHamilton/assets/12489873/c9377af2-715e-4119-9844-c55088f86ba5
+
