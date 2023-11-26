@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Huarui.STARLine</RootNamespace>
-    <AssemblyName>STARLine.Deck</AssemblyName>
+    <AssemblyName>Huarui.STARLine.Deck</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Huarui.STARLine.Deck.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -89,6 +90,7 @@
     <Compile Include="Deck\LabwareAction.cs" />
     <Compile Include="Deck\LabwareState.cs" />
     <Compile Include="Deck\ModelData.cs" />
+    <Compile Include="Deck\RackEventArgs.cs" />
     <Compile Include="Deck\RackType.cs" />
     <Compile Include="Deck\Segment.cs" />
     <Compile Include="Deck\Site.cs" />

@@ -57,6 +57,10 @@ namespace Huarui.STARLine
         /// </summary>
         public void Dispose()
         {
+            if (instrumentDeck != null)
+            {
+                Marshal.FinalReleaseComObject(instrumentDeck);
+            }
             instrumentDeck = null;
             if (Sites != null)
             {
@@ -73,9 +77,16 @@ namespace Huarui.STARLine
                 Sites.Clear();
             }
             Sites = null;
+            Properties.Clear();
+            Properties = null;
             if (Containers != null)
+            {
+                foreach (var c in Containers)
+                    c.Value.Dispose();
                 Containers.Clear();
+            }
             Containers = null;
+            Tag = null;
         }
         /// <summary>
         /// Labware ID
@@ -101,6 +112,15 @@ namespace Huarui.STARLine
         /// Containers in rack
         /// </summary>
         public Dictionary<string, Container> Containers { get; internal set; } = new Dictionary<string, Container>();
+        Container[] SortedContainers = null;
+        /// <summary>
+        /// container rows
+        /// </summary>
+        public int ContainerRows { get; internal set; }
+        /// <summary>
+        /// container columns
+        /// </summary>
+        public int ContainerColumns { get; internal set; }
         /// <summary>
         /// dose container in this labware connected to others
         /// </summary>
@@ -124,7 +144,7 @@ namespace Huarui.STARLine
         /// <summary>
         /// Rack Z base position
         /// </summary>
-        public double Z { get;  set; }
+        public double Z { get; set; }
         /// <summary>
         /// Rack width in x
         /// </summary>
@@ -171,6 +191,80 @@ namespace Huarui.STARLine
         /// template file of deck layout
         /// </summary>
         public string DeckFileName { get; private set; } = null;
+        void CreateSortedContainer()
+        {
+            var cnts = Containers.Values.ToList();
+            cnts.Sort((a, b) =>
+            {
+                if (b.X > a.X)
+                    return -1;
+                if (a.X > b.X)
+                    return 1;
+                if (a.Y > b.Y)
+                    return -1;
+                if (b.Y > a.Y)
+                    return 1;
+                return 0;
+            });
+            SortedContainers = cnts.ToArray();
+        }
+        /// <summary>
+        /// get containers for columns
+        /// </summary>
+        /// <param name="indexes">column, 0 based</param>
+        /// <returns></returns>
+        public Container[] Columns(params int[] indexes)
+        {
+            if (SortedContainers == null) CreateSortedContainer();
+            int count = 0;
+            for (int i = 0; i < indexes.Length; i++)
+                count++;
+            Container[] cnts = new Container[count * ContainerRows];
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                var col = indexes[i];
+                for (int j = 0; j < ContainerRows; j++)
+                {
+                    cnts[ContainerRows * i + j] = SortedContainers[col * ContainerRows + j];
+                }
+            }
+            return cnts;
+        }
+        /// <summary>
+        /// get containers by rows
+        /// </summary>
+        /// <param name="indexes">row index, 0 based</param>
+        /// <returns></returns>
+        public Container[] Rows(params int[] indexes)
+        {
+            if (SortedContainers == null) CreateSortedContainer();
+            int count = 0;
+            for (int i = 0; i < indexes.Length; i++)
+                count++;
+            Container[] cnts = new Container[count * ContainerColumns];
+            int index = 0;
+            for (int j = 0; j < indexes.Length; j++)
+            {
+                for (int i = 0; i < ContainerColumns; i++)
+                {
+                    var row = indexes[j];
+                    cnts[index++] = SortedContainers[ContainerRows * i + row];
+                }
+            }
+            return cnts;
+        }
+        /// <summary>
+        /// get all sorted containers
+        /// </summary>
+        /// <returns></returns>
+        public Container[] All()
+        {
+            if (SortedContainers == null) CreateSortedContainer();
+            Container[] all = new Container[SortedContainers.Length];
+            for (int i = 0; i < all.Length; i++)
+                all[i] = SortedContainers[i];
+            return all;
+        }
         /// <summary>
         /// find rack or child rack with labware id
         /// </summary>
@@ -213,7 +307,7 @@ namespace Huarui.STARLine
             widthNumOfTrack = 0;
             if (!this.ID.Equals("default"))
                 return -1;
-            foreach(var id in Sites.Keys)
+            foreach (var id in Sites.Keys)
             {
                 Site site = Sites[id];
                 if (site.Racks.Contains(rack))
@@ -234,7 +328,7 @@ namespace Huarui.STARLine
             if (r == null)
                 return;
             r.ID = labwareId;
-            if(r.Containers!=null && r.Containers.Count > 0)
+            if (r.Containers != null && r.Containers.Count > 0)
             {
                 foreach (Container c in r.Containers.Values)
                     c.Labware = labwareId;
@@ -305,9 +399,9 @@ namespace Huarui.STARLine
         {
             if (parent.Sites != null)
             {
-                foreach(string s in parent.Sites.Keys)
+                foreach (string s in parent.Sites.Keys)
                 {
-                    foreach(Rack r in parent.Sites[s].Racks)
+                    foreach (Rack r in parent.Sites[s].Racks)
                     {
                         if (r.ID.Equals(labwareId))
                         {
@@ -388,11 +482,14 @@ namespace Huarui.STARLine
             {
                 instrumentDeck.AddLabwareToDeck(labware, pos);
             }
+            RackAdded?.Invoke(this, new RackEventArgs() { Rack = this[labwareId], ParentSite = "", Parent = this });
             //wait labware added
             ReleaseComObject(pos);
             ReleaseComObject(labware);
             ReleaseComObject(cfg);
         }
+        public event EventHandler<RackEventArgs> RackAdded;
+        public event EventHandler<RackEventArgs> RackRemoved;
         /// <summary>
         /// add labware to site of template
         /// This can only be call in Deck property in STARCommand
@@ -402,7 +499,7 @@ namespace Huarui.STARLine
         /// <param name="labwareId">labware id</param>
         /// <param name="templateId">parent template id</param>
         /// <param name="bCkSiteFit">check site fit</param>
-        public void AddLabwareToDeckSite(string file, string siteId, string labwareId, string templateId="default", int bCkSiteFit = 1)
+        public void AddLabwareToDeckSite(string file, string siteId, string labwareId, string templateId = "default", int bCkSiteFit = 1)
         {
             if (instrumentDeck == null)
                 throw new Exception("you can only operate the labware in decklayout");
@@ -427,6 +524,7 @@ namespace Huarui.STARLine
             {
                 instrumentDeck.AddLabwareToDeckSite(labware, siteId, labwareId, templateId, bCkSiteFit);
             }
+            RackAdded?.Invoke(this, new RackEventArgs() { Rack = this[labwareId], ParentSite = siteId, Parent = (templateId == "default" ? this : this[templateId]) });
             //wait labwareAdded
             ReleaseComObject(labware);
             ReleaseComObject(cfg);
@@ -447,18 +545,18 @@ namespace Huarui.STARLine
             {
             }
 
+            Rack r = this[id];
+            if (r == null)
+                return;
             lock (this)
             {
                 instrumentDeck.RemoveFromDeck(id);
-
-                Rack r = this[id];
-                if (r == null)
-                    return;
                 if ("default".Equals(plabwId))
                     Sites[psiteId].Racks.Remove(r);
                 else
                     this[plabwId].Sites[psiteId].Racks.Remove(r);
             }
+            RackRemoved?.Invoke(this, new RackEventArgs() { Rack = r, ParentSite = psiteId, Parent = (plabwId == "default" ? this : this[plabwId]) });
         }
         /// <summary>
         /// Rename labware Id
@@ -492,11 +590,11 @@ namespace Huarui.STARLine
         {
             if (instrumentDeck == null)
                 throw new Exception("you can only operate the labware in decklayout");
-            IRectRack5 rr5= instrumentDeck.Labware[rackId];
+            IRectRack5 rr5 = instrumentDeck.Labware[rackId];
             if (rr5 == null)
                 throw new Exception("There is no rack with ID " + rackId);
             HxPars pars = new HxPars();
-            
+
             pars.Add(positionId, "Labwr_PosId");
             pars.Add(configFile, "Labwr_File");
             pars.Add(yOffset, "Labwr_YOffset");
@@ -508,7 +606,7 @@ namespace Huarui.STARLine
             HxPars pos = new HxPars();
             rr5.GetRackPositionData(pos);
             object p = new object();
-            if(pos.LookupItem2("Labwr_PosData", positionId, out p))
+            if (pos.LookupItem2("Labwr_PosData", positionId, out p))
             {
                 IHxPars3 cnt = p as IHxPars3;
                 double x = cnt.Item("Labwr_XCoord");
@@ -524,7 +622,7 @@ namespace Huarui.STARLine
                 int shape = cnt.Item("Labwr_Shape");
                 string file = cnt.Item("Labwr_File");
                 //Util.TraceIHxPars(cnt);
-                Container c=new Container()
+                Container c = new Container()
                 {
                     Position = positionId,
                     Labware = rackId,
@@ -579,7 +677,7 @@ namespace Huarui.STARLine
             if (instrumentDeck == null)
                 throw new Exception("Deck visiblization handling can be used only done in deck layout");
             HxPars pars = new HxPars();
-            for(int i=0;i<racks.Length;i++)
+            for (int i = 0; i < racks.Length; i++)
             {
                 Rack r = racks[i];
                 pars.Add(actions[i], r.ID);
@@ -598,7 +696,7 @@ namespace Huarui.STARLine
             if (instrumentDeck == null)
                 throw new Exception("Deck visiblization handling can be used only done in deck layout");
             HxPars pars = new HxPars();
-            foreach(Container c in cnts)
+            foreach (Container c in cnts)
             {
                 if (c == null)
                     continue;
@@ -644,10 +742,10 @@ namespace Huarui.STARLine
                 Rack r = new Rack();
                 r.ID = labwareId;
                 object labware = dl6.Labware[labwareId];
-                if(labware is ILabware7 labw7)
+                if (labware is ILabware7 labw7)
                 {
-                    string model="";
-                    double x=0, y=0, z=0;
+                    string model = "";
+                    double x = 0, y = 0, z = 0;
                     labw7.Get3DModel(ref model, ref x, ref y, ref z);
                     r.Model = new ModelData() { File = model, Offset = new Point3D(x, y, z) };
                     r.ImageFile = labw7.BitmapFile;
@@ -700,12 +798,14 @@ namespace Huarui.STARLine
                     }
                     //ITemplateDeckData.GetLabwareData 可以获取template上的rack
                 }
-                
+
                 IRectRack5 rr5 = labware as IRectRack5;
                 if (rr5 != null)
                 {
                     r.Type = RackType.Rack;
                     r.IsContainerConnected = (rr5.ConnectedCtr == 1);
+                    r.ContainerRows = rr5.Rows;
+                    r.ContainerColumns = rr5.Columns;
                     //load containers
                     HxPars pos = new HxPars();
                     Dictionary<string, Container> file2Cnt = new Dictionary<string, Container>();
@@ -751,7 +851,7 @@ namespace Huarui.STARLine
                             File = file,
                             LiquidSeekingStartPosition = liquidSeeking,
                             Clearance = clearance,
-                            Model=new ModelData() { File=model, Offset=offset}
+                            Model = new ModelData() { File = model, Offset = offset }
                         };
                         if (!file2Cnt.ContainsKey(file))
                         {
@@ -783,8 +883,8 @@ namespace Huarui.STARLine
                     double rwith = rect.Item("Labwr_XDim");
                     double rdepth = rect.Item("Labwr_YDim");
                     double rheight = rect.Item("Labwr_ZDim");
-                    double rx2 = rect.Item("Labwr_Bndry2X")-rx;
-                    double ry2 = rect.Item("Labwr_Bndry2Y")-ry;
+                    double rx2 = rect.Item("Labwr_Bndry2X") - rx;
+                    double ry2 = rect.Item("Labwr_Bndry2Y") - ry;
                     double rrotation = 0;
                     rrotation = -Math.Atan2(ry2, rx2) * 180 / Math.PI;
                     //Console.WriteLine(r.ID + ": " + rx2 + ", " + ry2+" = "+rrotation);
@@ -870,9 +970,9 @@ namespace Huarui.STARLine
                     site.Visible = false;
                     parent.Sites.Add(siteId, site);
                 }
-                 parent.Sites[siteId].Racks.Add(r);
+                parent.Sites[siteId].Racks.Add(r);
                 ReleaseComObject(labware);
-                
+
             }
         }
         public static Rack GetLayout(string decklayoutFile, string instrumentName)
@@ -913,8 +1013,8 @@ namespace Huarui.STARLine
                 s.Width = v.Item1("Labwr_DkSiteDimX");
                 s.Depth = v.Item1("Labwr_DkSiteDimY");
                 s.Id = v.Item1("Labwr_DkSiteId");
-                s.Visible = v.Item1("Labwr_Visible")==1;
-                s.ShowId = v.Item1("Labwr_ShowId")==1;
+                s.Visible = v.Item1("Labwr_Visible") == 1;
+                s.ShowId = v.Item1("Labwr_ShowId") == 1;
 
                 InstrumentLayout.Sites.Add(s.Id, s);
                 ReleaseComObject(v);

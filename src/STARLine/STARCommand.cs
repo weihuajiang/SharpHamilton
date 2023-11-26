@@ -404,6 +404,49 @@ namespace Huarui.STARLine
             return obj;
         }
         /// <summary>
+        /// show 3d System view in a window
+        /// </summary>
+        public void Show3DSystemView()
+        {
+            if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+            {
+                Show3DSystemViewForm().Show();
+            }
+            else
+            {
+                Thread t = new Thread(() =>
+                {
+                    System.Windows.Forms.Application.EnableVisualStyles();
+                    System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+                    System.Windows.Forms.Application.Run(Show3DSystemViewForm());
+                });
+                t.SetApartmentState(ApartmentState.STA);
+                t.Start();
+                while (true)
+                {
+                    var forms = System.Windows.Forms.Application.OpenForms;
+                    if (forms == null || forms.Count == 0)
+                        Thread.Sleep(100);
+                    else
+                        break;
+                }
+            }
+        }
+        System.Windows.Forms.Form Show3DSystemViewForm()
+        {
+            var form = new System.Windows.Forms.Form();
+            form.Width = 800;
+            form.Height = 600;
+            form.Text = "3D system view";
+
+            HxInstrument3DView view = null;
+            view = new HxInstrument3DView();
+            view.Initialize(form.Handle.ToInt32(), HxSystemDeck, InstrumentName);
+            view.Mode = HxSys3DViewMode.RunVisualization;
+            view.ModifyEnable = false;
+            return form;
+        }
+        /// <summary>
         /// Initialize the 3D System layout viewer
         /// </summary>
         /// <param name="handler">control handler that hold the viewer</param>

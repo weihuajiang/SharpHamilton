@@ -9,7 +9,7 @@ namespace Huarui.STARLine
     /// <summary>
     /// Container
     /// </summary>
-    public class Container
+    public class Container : IDisposable
     {
         /// <summary>
         /// Position Id
@@ -136,6 +136,12 @@ namespace Huarui.STARLine
             */
             System.Runtime.InteropServices.Marshal.FinalReleaseComObject(obj);
             obj = null;
+        }
+        /// <summary>
+        /// Dispose container
+        /// </summary>
+        public void Dispose()
+        {
         }
     }
 }

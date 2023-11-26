@@ -36,7 +36,8 @@ namespace Demo
             ML_STAR.Log = Console.Out;
             var labPath = STARRegistry.LabwarePath;
             ML_STAR.Init(this.Handle.ToInt32(), simulation);
-            ML_STAR.Init3DSystemView(panel1.Handle.ToInt32());
+            //ML_STAR.Init3DSystemView(panel1.Handle.ToInt32());
+            ML_STAR.Show3DSystemView();
             Task.Run(() =>
             {
                 ML_STAR.Start();
