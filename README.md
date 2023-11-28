@@ -17,6 +17,9 @@ With SharpHamilton, application which used Hamilton STAR line can be developed w
 We integrated this tool to [RoslynPad](https://github.com/roslynpad/roslynpad), you can write C# script to control STAR/STARlet/STARplus, please download it from following [link](https://weihuajiang.github.io/LabAutomation/RoslynPad.zip)
 or [windows store](https://www.microsoft.com/store/apps/9NJ44NZKHBXP)
 
+![image](https://github.com/weihuajiang/SharpHamilton/assets/12489873/be7b9ebe-9753-45d1-b208-dbb90d9f0520)
+
+
 ## Why did we developed it?
 
 To simplify application development with Hamilton STAR line. [Read more](WHY.md)
