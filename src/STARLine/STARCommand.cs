@@ -526,7 +526,9 @@ namespace Huarui.STARLine
             methodEnded = false;
             starEvent.OnMethodEnded += StarEvent_OnMethodEnded;
             starEvent.OnControlPanelComplete += StarEvent_OnControlPanelComplete;
-            
+
+            if (dbTracking != null && (dbTracking as HxVectorDbTracking).Enabled)
+                (dbTracking as HxVectorDbTracking).StartRun(RunName);
             MlSTAR.InitCommandRun(RunName, runId, cmdRunCfgFil, trace, HxInstrumentDeck, dbTracking,
                     cmdRunHwnd, InstrumentName, mode);
             MlSTAR.SetEventIdentifier(1);
