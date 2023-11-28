@@ -1,6 +1,4 @@
-﻿using Hamilton.HxSys3DView;
-using Hamilton.HxVectorDb;
-using Hamilton.Interop.HxCfgFil;
+﻿using Hamilton.Interop.HxCfgFil;
 using Hamilton.Interop.HxCoreLiquid;
 using Hamilton.Interop.HxGruCommand;
 using Hamilton.Interop.HxLabwr3;
@@ -122,7 +120,7 @@ namespace Huarui.STARLine
             {
                 if (dbTracking == null)
                     return false;
-                return (dbTracking as IHxVectorDbConfiguration).Enabled;
+                return (bool)dbTracking.GetType().GetProperty("Enabled").GetValue(dbTracking);
             }
         }
         #region Components
@@ -380,28 +378,20 @@ namespace Huarui.STARLine
 
         object GetVectorDbTracking()
         {
+            var assembly = Assembly.LoadWithPartialName("Hamilton.HxVectorDb");
+            var type = assembly.GetType("Hamilton.HxVectorDb.HxVectorDbTracking");
+            var obj = Activator.CreateInstance(type);
+            type.GetMethod("Init").Invoke(obj, new object[] { runId, Registry.ConfigPath + "\\HxVectorDb.cfg" });
+            if ((bool)type.GetProperty("Enabled").GetValue(obj))
+                type.GetMethod("StartRun").Invoke(obj, new object[] { RunName });
+            return obj;
             /*
-            AppDomainSetup tracking = new AppDomainSetup();
-            tracking.ApplicationBase = Registry.BinPath;
-            tracking.ShadowCopyFiles = "false";
-            tracking.ShadowCopyDirectories = "false";
-            tracking.ApplicationName = "Dynamics";
-            Evidence evidence = new Evidence(AppDomain.CurrentDomain.Evidence);
-            appDomain = AppDomain.CreateDomain("newDomain", evidence, tracking);
-            Assembly ambly = appDomain.Load("Hamilton.HxVectorDB");
-            Type t = ambly.GetType("Hamilton.HxVectorDb.HxVectorDbTracking");
-            object dbTrack = Activator.CreateInstance(t);
-            MethodInfo minfo= t.GetMethod("Init");
-            minfo.Invoke(dbTrack, new object[2] { runId, Registry.ConfigPath + "\\HxVectorDb.cfg" });
-            
-            return dbTrack;
-            */
-
             HxVectorDbTracking obj = new HxVectorDbTracking();
             obj.Init(runId, Registry.ConfigPath + "\\HxVectorDb.cfg");
-            //if (obj.Enabled)
-            //    obj.StartRun("VenusWrapper");
+            if (obj != null && obj.Enabled)
+                (obj as HxVectorDbTracking).StartRun(RunName);
             return obj;
+            */
         }
         /// <summary>
         /// show 3d System view in a window
@@ -439,13 +429,26 @@ namespace Huarui.STARLine
             form.Height = 600;
             form.Text = "3D system view";
 
-            HxInstrument3DView view = null;
-            view = new HxInstrument3DView();
-            view.Initialize(form.Handle.ToInt32(), HxSystemDeck, InstrumentName);
-            view.Mode = HxSys3DViewMode.RunVisualization;
-            view.ModifyEnable = false;
+            Create3DView(form.Handle.ToInt32());
             return form;
         }
+        object Create3DView(int handler)
+        {
+            var assembly = Assembly.LoadWithPartialName("Hamilton.HxSys3DView");
+            var type = assembly.GetType("Hamilton.HxSys3DView.HxInstrument3DView");
+            var view2 = Activator.CreateInstance(type);
+            type.GetMethod("Initialize").Invoke(view2, new object[] {handler, HxSystemDeck, InstrumentName });
+            type.GetProperty("Mode").SetValue(view2, Enum.Parse(assembly.GetType("Hamilton.HxSys3DView.HxSys3DViewMode"), "RunVisualization"));
+            type.GetProperty("ModifyEnable").SetValue(view2, false );
+            /*
+            HxInstrument3DView view = null;
+            view = new HxInstrument3DView();
+            view.Initialize(handler, HxSystemDeck, InstrumentName);
+            view.Mode = HxSys3DViewMode.RunVisualization;
+            view.ModifyEnable = false;
+            */
+            return view2;
+        } 
         /// <summary>
         /// Initialize the 3D System layout viewer
         /// </summary>
@@ -467,21 +470,13 @@ namespace Huarui.STARLine
             */
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
             {
-                HxInstrument3DView view = null;
-                view = new HxInstrument3DView();
-                view.Initialize(handler, HxSystemDeck, InstrumentName);
-                view.Mode = HxSys3DViewMode.RunVisualization;
-                view.ModifyEnable = false;
-                return view;
+                return Create3DView(handler);
             }
             else{
-                HxInstrument3DView view = null;
+                object view = null;
                 Thread t = new Thread(() =>
                 {
-                    view = new HxInstrument3DView();
-                    view.Initialize(handler, HxSystemDeck, InstrumentName);
-                    view.Mode = HxSys3DViewMode.RunVisualization;
-                    view.ModifyEnable = false;
+                    view=Create3DView(handler);
                 });
                 t.SetApartmentState(ApartmentState.STA);
                 t.Start();
@@ -527,8 +522,6 @@ namespace Huarui.STARLine
             starEvent.OnMethodEnded += StarEvent_OnMethodEnded;
             starEvent.OnControlPanelComplete += StarEvent_OnControlPanelComplete;
 
-            if (dbTracking != null && (dbTracking as HxVectorDbTracking).Enabled)
-                (dbTracking as HxVectorDbTracking).StartRun(RunName);
             MlSTAR.InitCommandRun(RunName, runId, cmdRunCfgFil, trace, HxInstrumentDeck, dbTracking,
                     cmdRunHwnd, InstrumentName, mode);
             MlSTAR.SetEventIdentifier(1);

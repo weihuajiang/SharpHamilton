@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Release\Huarui.STARLine.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -42,16 +42,6 @@
     <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hamilton.HxSys3DView, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Hamilton.HxSys3DView\v4.0_4.4.0.7740__2dc916514a2d1b53\Hamilton.HxSys3DView.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Hamilton.HxVectorDB, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.HxVectorDB.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Hamilton.Interop.HxCfgFil, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
