@@ -82,6 +82,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\..\Program Files (x86)\HAMILTON\Bin\Hamilton.Interop.HxTrace.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -97,6 +98,7 @@
     <Compile Include="Component\Arm\RightArm.cs" />
     <Compile Include="Component\Channel\AspirateMode.cs" />
     <Compile Include="Component\Channel\Direction.cs" />
+    <Compile Include="Component\Channel\LLDSensitivity.cs" />
     <Compile Include="Component\Channel\Parameter\AdvancedParameter.cs" />
     <Compile Include="Component\Channel\Parameter\FixHeightParameter.cs" />
     <Compile Include="Component\Channel\Parameter\IParameter.cs" />
@@ -111,6 +113,17 @@
     <Compile Include="Component\Channel\TADMUploadMode.cs" />
     <Compile Include="Component\Orbit\OrbitBarcodeReader.cs" />
     <Compile Include="Component\Channel\DispenseMode.cs" />
+    <Compile Include="Deck\Container.cs" />
+    <Compile Include="Deck\ContainerShapes.cs" />
+    <Compile Include="Deck\DeckLayout.cs" />
+    <Compile Include="Deck\LabwareAction.cs" />
+    <Compile Include="Deck\LabwareState.cs" />
+    <Compile Include="Deck\ModelData.cs" />
+    <Compile Include="Deck\RackEventArgs.cs" />
+    <Compile Include="Deck\RackType.cs" />
+    <Compile Include="Deck\Segment.cs" />
+    <Compile Include="Deck\Site.cs" />
+    <Compile Include="Deck\Status.cs" />
     <Compile Include="Error\Error.cs" />
     <Compile Include="Error\ErrorRecoveryOptions.cs" />
     <Compile Include="Error\FirmwareError.cs" />
@@ -178,12 +191,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\STARLine.Deck\STARLine.Deck.csproj">
-      <Project>{219fd9ac-69ed-4f66-8ff8-6a53a40ea584}</Project>
-      <Name>STARLine.Deck</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="key.pfx" />

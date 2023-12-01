@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- workaround for NuGet packages not working in WPF -->
+  <Import Project="$(MSBuildProjectDirectory)\obj\*.props" Condition=" '$(NuGetPackageRoot)' == '' and $(MSBuildProjectFile.Contains('wpftmp')) " />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>RoslynPad.Editor</RootNamespace>
+    <Version>$(EditorPackageVersion)</Version>
+    <Description>Provides a Roslyn-based code editor using AvalonEdit (WPF platform) with completion, diagnostics, and quick actions</Description>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" />
+    <Compile Update="**\*.xaml.cs" SubType="Designer" DependentUpon="%(Filename)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RoslynPad.Roslyn.Windows\RoslynPad.Roslyn.Windows.csproj" />
+    <ProjectReference Include="..\RoslynPad.Roslyn\RoslynPad.Roslyn.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="5.0.4" />
+    <PackageReference Include="System.Reactive.Linq" Version="4.1.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\RoslynPad.Editor.Shared\**\*.cs">
+      <Link>Shared\%(RecursivePath)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

@@ -364,3 +364,4 @@ FodyWeavers.xsd
 # Nuget file
 .nupkg
 .nuspec
+/editor/src/NuGet.Config

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- workaround for NuGet packages not working in WPF -->
+  <Import Project="$(MSBuildProjectDirectory)\obj\*.props" Condition=" '$(NuGetPackageRoot)' == '' and $(MSBuildProjectFile.Contains('wpftmp')) " />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net462</TargetFramework>
+    <RootNamespace>RoslynPad.Roslyn</RootNamespace>
+    <Version>$(RoslynAssemblyVersion)</Version>
+    <PackageVersion>$(RoslynPackageVersion)</PackageVersion>
+    <Description>Provides platform-specific (WPF) implementations for UI elements required by the RoslynPad.Roslyn package.</Description>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" />
+    <Compile Update="**\*.xaml.cs" SubType="Designer" DependentUpon="%(Filename)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RoslynPad.Roslyn\RoslynPad.Roslyn.csproj" />
+  </ItemGroup>
+</Project>

@@ -80,10 +80,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\STARLine.Deck\STARLine.Deck.csproj">
-      <Project>{219fd9ac-69ed-4f66-8ff8-6a53a40ea584}</Project>
-      <Name>STARLine.Deck</Name>
-    </ProjectReference>
     <ProjectReference Include="..\STARLine\STARLine.csproj">
       <Project>{b2bfea5d-3909-4ca3-8f18-901e2a0d557a}</Project>
       <Name>STARLine</Name>
