@@ -28,7 +28,7 @@ namespace RoslynPad.UI
         public const string NuGetPathVariableName = "$NuGet";
         private const string ConfigFileName = "RoslynPad.json";
 
-        private OpenDocumentViewModel? _currentOpenDocument;
+        private IOpenDocumentViewModel? _currentOpenDocument;
         private bool _hasUpdate;
         private double _editorFontSize;
         private string? _searchText;
@@ -91,7 +91,7 @@ namespace RoslynPad.UI
 
             DocumentRoot = CreateDocumentRoot();
 
-            OpenDocuments = new ObservableCollection<OpenDocumentViewModel>();
+            OpenDocuments = new ObservableCollection<IOpenDocumentViewModel>();
             OpenDocuments.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(HasNoOpenDocuments));
         }
 
@@ -284,7 +284,7 @@ namespace RoslynPad.UI
             return Path.Combine(documentsPath, "RoslynPad");
         }
 
-        public void EditUserDocumentPath()
+        public virtual void EditUserDocumentPath()
         {
             var dialog = _serviceProvider.GetService<IFolderBrowserDialog>();
             dialog.ShowEditBox = true;
@@ -296,7 +296,7 @@ namespace RoslynPad.UI
                 if (!DocumentRoot.Path.Equals(documentPath, StringComparison.OrdinalIgnoreCase))
                 {
                     Settings.DocumentPath = documentPath;
-
+                    _documentPath = documentPath;
                     DocumentRoot = CreateDocumentRoot();
                 }
             }
@@ -304,9 +304,9 @@ namespace RoslynPad.UI
 
         public NuGetViewModel NuGet { get; }
 
-        public ObservableCollection<OpenDocumentViewModel> OpenDocuments { get; }
+        public ObservableCollection<IOpenDocumentViewModel> OpenDocuments { get; }
 
-        public OpenDocumentViewModel? CurrentOpenDocument
+        public IOpenDocumentViewModel? CurrentOpenDocument
         {
             get => _currentOpenDocument;
             set
@@ -382,7 +382,7 @@ namespace RoslynPad.UI
             CurrentOpenDocument = openDocument;
         }
 
-        public async Task CloseDocument(OpenDocumentViewModel document)
+        public async Task CloseDocument(IOpenDocumentViewModel document)
         {
             if (document == null)
             {
@@ -395,7 +395,7 @@ namespace RoslynPad.UI
                 return;
             }
 
-            if (document.DocumentId != null)
+            if (document is OpenDocumentViewModel && document.DocumentId != null)
             {
                 RoslynHost.CloseDocument(document.DocumentId);
             }
@@ -425,7 +425,7 @@ namespace RoslynPad.UI
         public async Task CloseAllDocuments()
         {
             // can't modify the collection while enumerating it.
-            var openDocs = new ObservableCollection<OpenDocumentViewModel>(OpenDocuments);
+            var openDocs = new ObservableCollection<IOpenDocumentViewModel>(OpenDocuments);
             foreach (var document in openDocs)
             {
                 await CloseDocument(document).ConfigureAwait(false);
@@ -466,7 +466,7 @@ namespace RoslynPad.UI
         public IDelegateCommand ReportProblemCommand { get; }
 
         public double MinimumEditorFontSize => 8;
-        public double MaximumEditorFontSize => 72;
+        public double MaximumEditorFontSize => 30;
 
         public double EditorFontSize
         {

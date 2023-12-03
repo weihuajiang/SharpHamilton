@@ -27,7 +27,9 @@
                     Command="{Binding ToggleOptimizationCommand, Mode=OneTime}" />
     </FrameworkElement.InputBindings>
     <FrameworkElement.Resources>
-
+        <DataTemplate DataType="{x:Type roslynPad:GitChangesViewModel}">
+            <roslynPad:CommitView/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type ui:OpenDocumentViewModel}">
             <roslynPad:DocumentView />
         </DataTemplate>

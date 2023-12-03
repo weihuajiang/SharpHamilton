@@ -34,7 +34,7 @@ namespace RoslynPad
         internal MainWindow()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
-            //AllocConsole();
+            AllocConsole();
             Loaded += OnLoaded;
 
             var container = new ContainerConfiguration()
@@ -166,7 +166,8 @@ namespace RoslynPad
         private async void DockingManager_OnDocumentClosing(object sender, DocumentClosingEventArgs e)
         {
             e.Cancel = true;
-            var document = (OpenDocumentViewModel)e.Document.Content;
+            var document = (IOpenDocumentViewModel)e.Document.Content;
+            if (document == null) return;
             await _viewModel.CloseDocument(document).ConfigureAwait(false);
         }
 

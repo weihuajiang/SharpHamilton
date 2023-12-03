@@ -33,7 +33,7 @@ namespace RoslynPad.UI
             {
                 Name = Name.Substring(0, Name.Length - AutoSaveSuffix.Length);
             }
-            else if(!isFolder)
+            else
             {
                 Name = System.IO.Path.GetFileName(rootPath);
             }

@@ -6,6 +6,7 @@
              xmlns:controls="clr-namespace:RoslynPad.Controls"
              xmlns:ui="clr-namespace:RoslynPad.UI;assembly=RoslynPad.Common.UI"
              xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows"
+             xmlns:local="clr-namespace:RoslynPad"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance ui:OpenDocumentViewModel}">
     <UserControl.Resources>
@@ -60,7 +61,7 @@
                 <RowDefinition Name="ResultPaneRow"
                                Height="0" />
             </Grid.RowDefinitions>
-            <ToolBar Grid.ColumnSpan="3"
+            <ToolBar Grid.ColumnSpan="3" Height="30"
                      Background="Transparent"
                      BorderBrush="DarkGray"
                      BorderThickness="0 0 0 1">

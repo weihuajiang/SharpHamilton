@@ -80,6 +80,8 @@
                     Value="2" />
         </Style>
 
+        <roslynPad:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <roslynPad:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter"/>
     </FrameworkElement.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -121,7 +123,7 @@
         <controls:TreeListView Grid.Row="1"
                                ShowSeparator="False"
                                ItemContainerStyle="{StaticResource DocumentItemContainerStyle}"
-                               ItemsSource="{Binding DocumentRoot.Children, Converter={StaticResource FilterCollectionViewConverter}}" />
+                               ItemsSource="{Binding DocumentRoot.Children, Converter={StaticResource FilterCollectionViewConverter}, NotifyOnSourceUpdated=True}" />
 
         <ToolBar Grid.Row="2" ToolBarTray.IsLocked="True"
                  Background="Transparent"
@@ -149,6 +151,22 @@
                 <Image Source="{StaticResource MoveFolder}"
                        Width="20"
                        Height="20" />
+            </Button>
+            <Separator/>
+            <Button ToolTip="Init Git" Visibility="{Binding IsGitInited, Converter={StaticResource NotBooleanToVisibilityConverter}}"
+                    ToolTipService.Placement="Top"
+                    Command="{Binding InitGitCommand, Mode=OneTime}">
+                <Image Source="Resources/git.png" Width="20" Height="20"/>
+            </Button>
+            <Button ToolTip="Commit" Visibility="{Binding IsGitInited, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    ToolTipService.Placement="Top"
+                    Command="{Binding CommitCommand, Mode=OneTime}">
+                <Image Source="Resources/git-commit.png" Width="20" Height="20"/>
+            </Button>
+            <Button ToolTip="Branch History" Visibility="{Binding IsGitInited, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    ToolTipService.Placement="Top"
+                    Command="{Binding BrachHistoryCommand, Mode=OneTime}">
+                <Image Source="Resources/code-branch.png" Width="20" Height="20"/>
             </Button>
         </ToolBar>
 

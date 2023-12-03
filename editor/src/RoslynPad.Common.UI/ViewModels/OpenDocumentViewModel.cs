@@ -24,7 +24,7 @@ using RoslynPad.Utilities;
 namespace RoslynPad.UI
 {
     [Export]
-    public class OpenDocumentViewModel : NotificationObject
+    public class OpenDocumentViewModel : NotificationObject, IOpenDocumentViewModel
     {
         public string DefaultCode { get; set; } = "";
         private const string DefaultILText = "// Run to view IL";

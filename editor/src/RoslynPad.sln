@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "STARLine", "STARLine", "{29
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STARLine", "..\..\src\STARLine\STARLine.csproj", "{B2BFEA5D-3909-4CA3-8F18-901E2A0D557A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{E50DF474-F338-4384-814C-F500F673DB93}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		RoslynPad.Editor.Shared\RoslynPad.Editor.Shared.projitems*{7fb0604b-44cd-4db1-99c5-e89ea6c20aec}*SharedItemsImports = 13
@@ -240,6 +242,26 @@ Global
 		{B2BFEA5D-3909-4CA3-8F18-901E2A0D557A}.Release|x64.Build.0 = Release|Any CPU
 		{B2BFEA5D-3909-4CA3-8F18-901E2A0D557A}.Release|x86.ActiveCfg = Release|Any CPU
 		{B2BFEA5D-3909-4CA3-8F18-901E2A0D557A}.Release|x86.Build.0 = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|x64.Build.0 = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Debug|x86.Build.0 = Debug|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|ARM.Build.0 = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|ARM64.Build.0 = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|x64.ActiveCfg = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|x64.Build.0 = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|x86.ActiveCfg = Release|Any CPU
+		{E50DF474-F338-4384-814C-F500F673DB93}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

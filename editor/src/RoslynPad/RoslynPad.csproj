@@ -13,6 +13,8 @@
     <NoWarn>1701;1702</NoWarn>
     <RuntimeIdentifier>win</RuntimeIdentifier>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Authors>Huajaing Wei</Authors>
+    <Product>C# Script Editor for STAR Line</Product>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -21,6 +23,12 @@
   <ItemGroup>
     <None Remove="**\*.xshd" />
     <EmbeddedResource Include="**\*.xshd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\.gitignore" />
+    <None Remove="Resources\code-branch.png" />
+    <None Remove="Resources\git-commit.png" />
+    <None Remove="Resources\git.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\STARLine\bin\Release\Huarui.STARLine.xml" Link="Huarui.STARLine.xml">
@@ -39,11 +47,18 @@
   <ItemGroup>
     <PackageReference Include="AvalonLibrary" Version="2.4.0" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.1" />
+    <PackageReference Include="LibGit2Sharp" Version="0.28.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.8.1" />
     <PackageReference Include="Mono.Cecil" Version="0.10.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
     <PackageReference Include="Microsoft.DiaSymReader.Native" Version="1.7.0" />
     <PackageReference Include="Xceed.Wpf.AvalonDock.Themes.VS2013" Version="2.9.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\.gitignore" />
+    <Resource Include="Resources\code-branch.png" />
+    <Resource Include="Resources\git-commit.png" />
+    <Resource Include="Resources\git.png" />
   </ItemGroup>
 </Project>
