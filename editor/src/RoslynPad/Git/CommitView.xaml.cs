@@ -47,9 +47,62 @@ namespace RoslynPad
                 ExpandAllItems(treeItem as ItemsControl);
             }
         }
+        private void OnDocumentClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                if (((FrameworkElement)e.Source).DataContext is GitChangesViewModel gitChangeModel)
+                {
+                    string path = "";
+                    if (gitChangeModel.IsFolder)
+                    {
+                    }
+                    else
+                    {
+                        path = gitChangeModel.Path;
+                        if (viewModel != null && viewModel.MainViewModel != null)
+                        {
+                            viewModel.MainViewModel.OpenDocument(path);
+                        }
+                    }
+                }
+            }
+        }
+        private void GitCompareClicked(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)e.Source).DataContext is GitChangesViewModel gitChangeModel)
+            {
+                string path = "";
+                if (gitChangeModel.IsFolder)
+                {
+                }
+                else
+                {
+                    path = gitChangeModel.Path;
+                    if (viewModel != null && viewModel.MainViewModel != null)
+                    {
+                        viewModel.MainViewModel.CompareFile(path);
+                    }
+                }
+            }
+        }
         private void GitItemOpenClicked(object sender, RoutedEventArgs e)
         {
-
+            if (((FrameworkElement)e.Source).DataContext is GitChangesViewModel gitChangeModel)
+            {
+                string path = "";
+                if (gitChangeModel.IsFolder)
+                {
+                }
+                else
+                {
+                    path = gitChangeModel.Path;
+                    if (viewModel != null && viewModel.MainViewModel != null)
+                    {
+                        viewModel.MainViewModel.OpenDocument(path);
+                    }
+                }
+            }
         }
         private  void GitItemIgnoreClicked(object sender, RoutedEventArgs e)
         {
@@ -64,17 +117,17 @@ namespace RoslynPad
                 {
                     path = gitChangeModel.Path;
                 }
-                if(viewModel != null && viewModel.IgnoreCommand != null)
+                if(viewModel != null && viewModel.MainViewModel != null)
                 {
-                    viewModel.IgnoreCommand(viewModel, path);
+                    viewModel.MainViewModel.GitCommit(viewModel, path);
                 }
             }
         }
         private void OnCommit(object sender, RoutedEventArgs e)
         {
-            if(viewModel != null && viewModel.CommitCommand!=null)
+            if(viewModel != null && viewModel.MainViewModel!=null)
             {
-                viewModel.CommitCommand(viewModel, CommitComment.Text);
+                viewModel.MainViewModel.GitCommit(viewModel, CommitComment.Text);
                 CommitComment.IsEnabled = false;
                 CommitButton.IsEnabled = false;
             }

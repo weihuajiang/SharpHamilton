@@ -9,6 +9,7 @@ using LibGit2Sharp;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace RoslynPad
 {
@@ -26,6 +27,7 @@ namespace RoslynPad
         public IDelegateCommand CommitCommand { get; }
         public IDelegateCommand BrachHistoryCommand { get; }
         Repository? repository;
+        string repositroyPath;
 
         [ImportingConstructor]
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
@@ -34,6 +36,7 @@ namespace RoslynPad
         {
             InitGitCommand = commands.CreateAsync(InitGit);
             CommitCommand = commands.Create(Commit);
+            BrachHistoryCommand = commands.Create(ViewBranchHistory);
             CheckGit();
         }
         public override void EditUserDocumentPath()
@@ -55,6 +58,7 @@ namespace RoslynPad
                 if (!string.IsNullOrEmpty(name))
                 {
                     repository = new Repository(name);
+                    repositroyPath = GetGitPath(name);
                     LoadIgnore();
                     AddIgnore();
                     IsGitInited = true;
@@ -62,6 +66,12 @@ namespace RoslynPad
             }
             else
                 IsGitInited = false;
+        }
+        string GetGitPath(string name)
+        {
+            if (name.EndsWith(".git\\", StringComparison.OrdinalIgnoreCase))
+                return new DirectoryInfo(name).Parent.FullName;
+            return name;
         }
         public override void CreateNewDocument()
         {
@@ -78,7 +88,33 @@ ML_STAR.End();";
             CurrentOpenDocument = openDocument;
             
         }
-
+        /// <summary>
+        /// open document from path, if document if not csx, open it with system editor
+        /// </summary>
+        /// <param name="path"></param>
+        public void OpenDocument(string path)
+        {
+            if (!Path.IsPathRooted(path))
+                path = Path.Combine(DocumentRoot.Path, path);
+            foreach(var d in OpenDocuments)
+            {
+                if(d.Document!=null && d.Document.Path==path)
+                {
+                    CurrentOpenDocument = d;
+                    OnPropertyChanged(nameof(CurrentOpenDocument));
+                    return;
+                }
+            }
+            if(path.EndsWith(".csx", StringComparison.OrdinalIgnoreCase))
+            {
+                var document = DocumentViewModel.FromPath(path);
+                OpenDocument(document);
+            }
+            else
+            {
+                Process.Start(path);
+            }
+        }
         protected override ImmutableArray<Assembly> CompositionAssemblies => base.CompositionAssemblies
             .Add(Assembly.Load(new AssemblyName("RoslynPad.Roslyn.Windows")))
             .Add(Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows")))
@@ -113,11 +149,12 @@ ML_STAR.End();";
                         }
                         Repository.Init(path);
                         repository = new Repository(path);
+                        repositroyPath = GetGitPath(path);
                         var user = new Signature(Environment.UserName, Environment.UserName + "@annymous", DateTimeOffset.Now);
                         LoadIgnore();
                         AddIgnore();
-                        Commands.Stage(repository, "*");
-                        repository.Commit("initial", user, user);
+                        Commands.Stage(repository, ".gitignore");
+                        repository.Commit("add .gitignore", user, user);
                     }
                 }
             });
@@ -160,14 +197,105 @@ ML_STAR.End();";
                     Console.WriteLine("no changes");
                     return;
                 }
+                changes.MainViewModel = this;
                 OpenDocuments.Add(changes);
                 CurrentOpenDocument = changes;
             }
         }
-        void GitOpen(GitChangesViewModel document, string path)
+        public void ViewBranchHistory()
         {
+            if (repository != null)
+            {
+                GitBranchHistoryViewModel vm = new GitBranchHistoryViewModel();
+                foreach(var i in repository.Commits)
+                {
+                    vm.Commits.Add(new CommitItem(i.Id+"", i.Committer.When.DateTime, i.Committer.Name, i.MessageShort));
+                }
+                if (vm.Commits.Count == 0) return;
+                vm.MainViewModel = this;
+                OpenDocuments.Add(vm);
+                CurrentOpenDocument = vm;
+            }
         }
-        async void GitCommit(GitChangesViewModel document, string comment)
+        public void ShowFileHistory(string path)
+        {
+            if (repository == null) return;
+            path = PathExtension.RelativePath(repositroyPath, path);
+            GitBranchHistoryViewModel vm = new GitBranchHistoryViewModel();
+            vm.Type = BranchHistoryType.File;
+            vm.FilePath = path;
+            foreach(var i in repository.Commits)
+            {
+                Tree commitTree = i.Tree;
+                var parentCommit = i.Parents.FirstOrDefault();
+                if (parentCommit == null)
+                {
+                    var record = i.Tree[path];
+                    if(record!=null)
+                        vm.Commits.Add(new CommitItem(i.Id + "", i.Committer.When.DateTime, i.Committer.Name, i.MessageShort));
+                }
+                else
+                {
+                    Tree parentCommitTree = parentCommit.Tree;
+                    var changes= repository.Diff.Compare<TreeChanges>(parentCommitTree, commitTree);
+                    foreach(var c in changes)
+                    {
+                        if(c.Status!= ChangeKind.Deleted && c.Path==path)
+                            vm.Commits.Add(new CommitItem(i.Id + "", i.Committer.When.DateTime, i.Committer.Name, i.MessageShort));
+                    }
+                }
+            }
+            if (vm.Commits.Count == 0) return;
+            vm.MainViewModel = this;
+            vm.Title = path + " - Hisotry";
+            OpenDocuments.Add(vm);
+            CurrentOpenDocument = vm;
+        }
+        /// <summary>
+        /// view detail of commit
+        /// </summary>
+        /// <param name="id"></param>
+        public void ShowCommitDetail(string id)
+        {
+            if (repository == null) return;
+            var commit = repository.Lookup<Commit>(id);
+            if (commit == null) return;
+            var changes = GetChanges(repository, commit);
+            changes.Title = "Commit detail - " + (commit.Id + "").Substring(0, 8);
+            changes.MainViewModel = this;
+            OpenDocuments.Add(changes);
+            CurrentOpenDocument = changes;
+        }
+        /// <summary>
+        /// view file in commit
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="path"></param>
+        public void ShowCommitFile(string id, string path)
+        {
+            if (repository == null) return;
+            var commit = repository.Lookup<Commit>(id);
+            if (commit == null) return;
+            var item = commit.Tree[path];
+            if (item == null) return;
+            //(item.Target as Blob).
+            var blob = item.Target as Blob;
+            if (blob == null) return;
+            GitCommitFileViewModel vm = new GitCommitFileViewModel(path, blob, this);
+            vm.Title = path + "-" + id.Substring(0, 8);
+            OpenDocuments.Add(vm);
+            CurrentOpenDocument = vm;
+        }
+        public void CompareFile(string path)
+        {
+            if (repository == null) return;
+            var vm = GitFileCompareViewModel.CompareFile(repository, path);
+            if (vm == null) return;
+            vm.Title = "Diff - " + path;
+            OpenDocuments.Add(vm);
+            CurrentOpenDocument = vm;
+        }
+        internal async void GitCommit(GitChangesViewModel document, string comment)
         {
             if (repository == null) return;
             Commands.Stage(repository, "*");
@@ -175,7 +303,7 @@ ML_STAR.End();";
             repository.Commit(comment, user, user);
             await CloseDocument(document);
         }
-        async void GitIgnore(GitChangesViewModel document, string path)
+        internal async void GitIgnore(GitChangesViewModel document, string path)
         {
             if (repository == null) return;
             ignores.Add(path);
@@ -198,14 +326,12 @@ ML_STAR.End();";
         private GitChangesViewModel GetChanges(Repository repo)
         {
             var models = new GitChangesViewModel("", "");
-            models.CommitCommand = GitCommit;
-            models.IgnoreCommand = GitIgnore;
+            models.MainViewModel = this;
             models.Title = "Commit Changes";
             var changes = repo.Diff.Compare<TreeChanges>(repo.Head.Tip.Tree, DiffTargets.WorkingDirectory);
             foreach (var i in changes)
             {
                 string path = Path.GetDirectoryName(i.Path);
-                Console.WriteLine(path);
                 if(string.IsNullOrEmpty(path))
                     models.Children.Add(new GitChangesViewModel(i.Path, (i.Status+"").Substring(0,1)));
                 else
@@ -223,7 +349,7 @@ ML_STAR.End();";
                         if (child == null)
                         {
                             child = new GitChangesViewModel(p, "", true);
-                            pathModel.Children.Add(child);
+                            pathModel.Children.Insert(0,child);
                         }
                         pathModel = child;
                     }
@@ -232,34 +358,65 @@ ML_STAR.End();";
             }
             return models;
         }
-        private GitChangesViewModel ShowChanges(Repository repo, Commit commit)
+        CommitChangesViewModel GetChanges(Tree tree, string path)
         {
-            var models = new GitChangesViewModel("", "");
+            CommitChangesViewModel models= new CommitChangesViewModel(path, "A");
+            foreach(var i in tree)
+            {
+                if(i.TargetType!= TreeEntryTargetType.Tree)
+                {
+                    models.Children.Add(new CommitChangesViewModel(i.Path, "A"));
+                }
+                else if(i.Target is Tree t)
+                {
+                    models.Children.Add(GetChanges(t, i.Path));
+                }
+            }
+            return models;
+        }
+        private CommitChangesViewModel GetChanges(Repository repo, Commit commit)
+        {
+            var models = new CommitChangesViewModel("", "");
+            models.CommitId = commit.Id + "";
             Tree commitTree = commit.Tree;
             var parentCommit = commit.Parents.FirstOrDefault();
             if (parentCommit == null)
             {
-                foreach(var i in commitTree)
-                {
-                    if(i.TargetType!= TreeEntryTargetType.Tree)
-                    {
-                        models.Children.Add(new GitChangesViewModel(i.Path, "A"));
-                    }
-                }
+                models = GetChanges(commitTree,"");
+                models.CommitId = commit.Id + "";
                 return models;
             }
             Tree parentCommitTree = parentCommit.Tree;
             var changes = repo.Diff.Compare<TreeChanges>(parentCommitTree, commitTree);
 
-            foreach (TreeEntryChanges treeEntryChanges in changes)
+            foreach (TreeEntryChanges i in changes)
             {
-                models.Children.Add(new GitChangesViewModel(treeEntryChanges.Path, (treeEntryChanges.Status + "").Substring(0, 1)));
+                string path = Path.GetDirectoryName(i.Path);
+                if (string.IsNullOrEmpty(path))
+                    models.Children.Add(new CommitChangesViewModel(i.Path, (i.Status + "").Substring(0, 1)));
+                else
+                {
+                    var pathModel = models;
+                    var paths = path.Split('\\', '/');
+                    foreach (var p in paths)
+                    {
+                        CommitChangesViewModel? child = null;
+                        foreach (var c in pathModel.Children)
+                        {
+                            if (c.IsFolder && c.Name == p)
+                                child = c;
+                        }
+                        if (child == null)
+                        {
+                            child = new CommitChangesViewModel(p, "", true);
+                            pathModel.Children.Insert(0,child);
+                        }
+                        pathModel = child;
+                    }
+                    pathModel.Children.Add(new CommitChangesViewModel(i.Path, (i.Status + "").Substring(0, 1)));
+                }
             }
             return models;
-        }
-        public void ViewBrachHistory()
-        {
-
         }
 
         public void Dispose()

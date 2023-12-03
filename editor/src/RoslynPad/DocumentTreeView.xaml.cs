@@ -78,7 +78,15 @@ namespace RoslynPad
                     break;
             }
         }
-
+        private void OnViewHistoryClick(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)e.Source).DataContext is DocumentViewModel documentViewModel)
+            {
+                if (documentViewModel.IsFolder) return;
+                var file = documentViewModel.Path;
+                _viewModel.ShowFileHistory(file);
+            }
+        }
         private bool FilterCollectionViewSourceConverter_OnFilter(object arg) => ((DocumentViewModel)arg).IsSearchMatch;
 
         private async void DocumentsContextMenu_Delete_Click(object sender, RoutedEventArgs e)

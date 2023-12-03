@@ -24,7 +24,7 @@ using RoslynPad.Utilities;
 namespace RoslynPad.UI
 {
     [Export]
-    public class OpenDocumentViewModel : NotificationObject, IOpenDocumentViewModel
+    public class OpenDocumentViewModel : NotificationObject, IOpenDocumentViewModel, IDisposable
     {
         public string DefaultCode { get; set; } = "";
         private const string DefaultILText = "// Run to view IL";
@@ -119,7 +119,13 @@ namespace RoslynPad.UI
             get => _ilText;
             private set => SetProperty(ref _ilText, value);
         }
-
+        public void Dispose()
+        {
+            if(_results!=null)
+            {
+                _results.Clear();
+            }
+        }
         [ImportingConstructor]
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public OpenDocumentViewModel(IServiceProvider serviceProvider, MainViewModelBase mainViewModel, ICommandProvider commands, IAppDispatcher appDispatcher, ITelemetryProvider telemetryProvider)

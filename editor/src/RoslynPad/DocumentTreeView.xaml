@@ -55,6 +55,9 @@
             <MenuItem Header="_Open in File Explorer"
                       Click="DocumentsContextMenu_OpenFolder_Click" />
             <MenuItem Header="_Delete" Click="DocumentsContextMenu_Delete_Click"/>
+            <MenuItem Header="Git">
+                <MenuItem Header="View _History" Click="OnViewHistoryClick"/>
+            </MenuItem>
         </ContextMenu>
 
         <Style x:Key="DocumentItemContainerStyle"

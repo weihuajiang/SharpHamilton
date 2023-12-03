@@ -254,7 +254,7 @@ namespace RoslynPad.UI
             {
 
                 var userDefinedPath = Settings.DocumentPath;
-                _documentPath = !string.IsNullOrEmpty(userDefinedPath) && Directory.Exists(userDefinedPath)
+                _documentPath = userDefinedPath!=null && !string.IsNullOrEmpty(userDefinedPath) && Directory.Exists(userDefinedPath)
                     ? userDefinedPath
                     : GetDefaultDocumentPath();
             }
@@ -402,6 +402,7 @@ namespace RoslynPad.UI
 
             OpenDocuments.Remove(document);
             document.Close();
+            if (document is IDisposable t) t.Dispose();
         }
 
         public async Task AutoSaveOpenDocuments()
