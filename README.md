@@ -72,6 +72,7 @@ discover = null;
 ```
 
 manipulation of deck layout, use array of containers instead of sequence
+
 ```csharp
 var labwPath = STARRegistry.LabwarePath;
 ML_STAR.Deck.AddLabwareToDeckSite(Path.Combine(labwPath, @"ML_STAR\SMP_CAR_32_12x75_A00.rck"), "1T-7", "Smp");
@@ -83,7 +84,7 @@ You can still use sequence defined in deck layout, or generate sequence from rac
 
 ```csharp
 var samples=ML_STAR.GetSequence("Sample");
-```csharp
+```
 
 Both sequence or array of containers can be used for pipetting or tip handling. So you can programe with sequence like in Venus to control STAR,
 
