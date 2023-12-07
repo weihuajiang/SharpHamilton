@@ -80,11 +80,13 @@ var samples = new Container[] { smp["1"], smp["2"], smp["3"], smp["4"], smp["5"]
 ```
 
 You can still use sequence defined in deck layout, or generate sequence from rack.
+
 ```csharp
 var samples=ML_STAR.GetSequence("Sample");
 ```csharp
 
 Both sequence or array of containers can be used for pipetting or tip handling. So you can programe with sequence like in Venus to control STAR,
+
 ```csharp
 ML_STAR = new STARCommand();
 ML_STAR.Init(deck, hwnd, false);
