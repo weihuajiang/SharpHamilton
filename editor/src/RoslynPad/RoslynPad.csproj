@@ -6,7 +6,7 @@
     <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
     <ExtrasEnableWpfProjectSetup>true</ExtrasEnableWpfProjectSetup>
-    <ApplicationIcon>Resources\RoslynPad.ico</ApplicationIcon>
+    <ApplicationIcon>icon6.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
@@ -15,10 +15,16 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Authors>Huajaing Wei</Authors>
     <Product>C# Script Editor for STAR Line</Product>
+    <Nullable>enable</Nullable>
+    <StartupObject>RoslynPad.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="**\*.xshd" />
@@ -27,9 +33,9 @@
   <ItemGroup>
     <None Remove="Resources\.gitignore" />
     <None Remove="Resources\blank.png" />
-    <None Remove="Resources\code-branch.png" />
-    <None Remove="Resources\git-commit.png" />
+    <None Remove="Resources\codebranch.png" />
     <None Remove="Resources\git.png" />
+    <None Remove="Resources\gitcommit.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\STARLine\bin\Release\Huarui.STARLine.xml" Link="Huarui.STARLine.xml">
@@ -46,10 +52,9 @@
     <ProjectReference Include="..\RoslynPad.Editor.Windows\RoslynPad.Editor.Windows.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="AvalonLibrary" Version="2.4.0" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.1" />
-    <PackageReference Include="LibGit2Sharp" Version="0.28.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.8.1" />
     <PackageReference Include="Mono.Cecil" Version="0.10.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
@@ -60,8 +65,11 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\.gitignore" />
     <Resource Include="Resources\blank.png" />
-    <Resource Include="Resources\code-branch.png" />
-    <Resource Include="Resources\git-commit.png" />
+    <Resource Include="Resources\codebranch.png" />
+    <Resource Include="Resources\gitcommit.png" />
     <Resource Include="Resources\git.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Package\" />
   </ItemGroup>
 </Project>

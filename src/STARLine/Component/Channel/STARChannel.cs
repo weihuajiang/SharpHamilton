@@ -1,14 +1,10 @@
-﻿using Hamilton.Interop.HxCfgFil;
-using Hamilton.Interop.HxCoreLiquid;
-using Hamilton.Interop.HxGruCommand;
+﻿using Hamilton.Interop.HxGruCommand;
 using Hamilton.Interop.HxLabwr3;
 using Hamilton.Interop.HxParams;
-using Hamilton.Interop.HxReg;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Container = Huarui.STARLine.Container;
 
 namespace Huarui.STARLine
 {
@@ -23,7 +19,7 @@ namespace Huarui.STARLine
         {
             _command = cmd;
             //load tadm feature installation status
-            
+
         }
 
         /// <summary>
@@ -354,35 +350,35 @@ namespace Huarui.STARLine
             //liquid following
             pt.LiquidFollowing = parameter.AdvancedParameters.LiquidFollowing;
             pt.ZMoveAfterDispense = parameter.AdvancedParameters.ZMOveAfterDispense;
-            
+
             //mix 
             pt.MixCycle = parameter.AdvancedParameters.MixCycle;
             pt.MixPosition = parameter.AdvancedParameters.MixPosition;
             pt.MixVolume = parameter.AdvancedParameters.MixVolume;
-            if(parameter is LLDsParameter)
+            if (parameter is LLDsParameter)
             {
                 pt.cLLDSensitivity = (parameter as LLDsParameter).cLLDSensitivity;
                 pt.pLLDSensitivity = (parameter as LLDsParameter).pLLDSensitivity;
                 pt.SubmergeDepth = (parameter as LLDsParameter).SubmergeDepth;
                 pt.MaxHeightDifference = (parameter as LLDsParameter).MaxHeightDifference;
             }
-            else if(parameter is CLLDParameter)
+            else if (parameter is CLLDParameter)
             {
                 pt.cLLDSensitivity = (parameter as CLLDParameter).cLLDSensitivity;
                 pt.SubmergeDepth = (parameter as CLLDParameter).SubmergeDepth;
             }
-            else if(parameter is FixHeightParameter)
+            else if (parameter is FixHeightParameter)
             {
                 pt.FixHeight = (parameter as FixHeightParameter).FixHeight;
                 pt.RetractDistanceForAirTransport = (parameter as FixHeightParameter).RetractDistanceForAirTransport;
             }
-            else if(parameter is TouchOffParameter)
+            else if (parameter is TouchOffParameter)
             {
                 pt.TouchOff = true;
                 pt.RetractDistanceForAirTransport = (parameter as TouchOffParameter).RetractDistanceForAirTransport;
                 pt.PositionAboveTouch = (parameter as TouchOffParameter).PositionAboveTouch;
             }
-            else if(parameter is SideTouchParameter)
+            else if (parameter is SideTouchParameter)
             {
                 pt.TouchSide = true;
                 pt.RetractDistanceForAirTransport = (parameter as SideTouchParameter).RetractDistanceForAirTransport;
@@ -400,7 +396,7 @@ namespace Huarui.STARLine
         public void Aspirate(Container[] cnts, double volume, IParameter[] parameter, AspirateMode mode = AspirateMode.Aspiration, ErrorRecoveryOptions options = null)
         {
             PipettingParameter[] pts = new PipettingParameter[parameter.Length];
-            for(int i=0;i<parameter.Length;i++)
+            for (int i = 0; i < parameter.Length; i++)
                 pts[i] = SetParameter(parameter[i]);
             double[] vs = new double[Count];
             for (int i = 0; i < vs.Length; i++)
@@ -431,7 +427,7 @@ namespace Huarui.STARLine
         /// <param name="mode">aspirate mode</param>
         /// <param name="options">error recovery options</param>
         /// <exception cref="STARException">device error will be throwed with STARException</exception>
-        public void Aspirate(Container[] cnts, double volume, LLDsParameter parameter, AspirateMode mode=AspirateMode.Aspiration, ErrorRecoveryOptions options=null)
+        public void Aspirate(Container[] cnts, double volume, LLDsParameter parameter, AspirateMode mode = AspirateMode.Aspiration, ErrorRecoveryOptions options = null)
         {
             PipettingParameter pt = SetParameter(parameter);
             Aspirate(cnts, volume, pt, mode, options);
@@ -536,7 +532,7 @@ namespace Huarui.STARLine
         private void Aspirate(Container[] cnts, double[] volumes, PipettingParameter parameter, AspirateMode mode = AspirateMode.Aspiration, ErrorRecoveryOptions options = null)
         {
             PipettingParameter[] parameters = new PipettingParameter[Count];
-            for (int i = 0; i < parameters.Length;i++)
+            for (int i = 0; i < parameters.Length; i++)
                 parameters[i] = parameter;
             AspirateImpl(cnts, volumes, parameters, mode, options);
         }
@@ -654,7 +650,7 @@ namespace Huarui.STARLine
             {
                 Task chnTask = null;
                 if (_command.Simulator != null && _command.Simulator.Channel1000 != null && _command.IsSimulation)
-                    chnTask = _command.Simulator.Channel1000.Pipette(cnts, 5, 5);
+                    chnTask = _command.Simulator.Channel1000.Pipette(cnts, GetPipettPositions(cnts, volumes, parameters), GetFollowingHeights(cnts, volumes, parameters, true));
 
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, channelTask, objBounds) as HxPars;
@@ -678,6 +674,54 @@ namespace Huarui.STARLine
             Util.ReleaseComObject(usedVariable);
             Util.ReleaseComObject(objBounds);
             Util.ReleaseComObject(seqc);
+        }
+        internal static double[] GetPipettPositions(Container[] cnts, double[] volumes, PipettingParameter[] parameters)
+        {
+            double[] heights = new double[cnts.Length];
+            for (int i = 0; i < cnts.Length; i++)
+            {
+                var p = parameters[i];
+                if (p == null || cnts[i] == null)
+                    heights[i] = 0;
+                else
+                {
+                    if (p.cLLDSensitivity == LLDSensitivity.Off && p.pLLDSensitivity == LLDSensitivity.Off)
+                        heights[i] = p.FixHeight;
+                    else
+                    {
+                        heights[i] = cnts[i].Depth / 2;
+                    }
+                }
+            }
+            return heights;
+        }
+        internal static double[] GetFollowingHeights(Container[] cnts, double[] volumes, PipettingParameter[] parameters, bool aspirate = true)
+        {
+            double[] heights = new double[cnts.Length];
+            for (int i = 0; i < cnts.Length; i++)
+            {
+                var p = parameters[i];
+                if (p == null || cnts[i] == null || !p.LiquidFollowing)
+                    heights[i] = 0;
+                else
+                {
+                    heights[i] = (aspirate ? 1 : -1) * volumes[i] / (Math.PI * cnts[i].Diameter * cnts[i].Diameter);
+                    if (aspirate)
+                    {
+                        if (p.cLLDSensitivity == LLDSensitivity.Off && p.pLLDSensitivity == LLDSensitivity.Off)
+                        {
+                            if (heights[i] > p.FixHeight)
+                                heights[i] = p.FixHeight;
+                        }
+                        else
+                        {
+                            if (heights[i] > cnts[i].Depth / 2)
+                                heights[i] = cnts[i].Depth / 2;
+                        }
+                    }
+                }
+            }
+            return heights;
         }
         /// <summary>
         /// Dispense with different parameter of each channel
@@ -726,10 +770,10 @@ namespace Huarui.STARLine
         /// <param name="useFirstAspirtateLiquidClass">use first aspirate liquid class, otherwise use liquid class in the parameter</param>
         /// <param name="options">error recovery options</param>
         /// <exception cref="STARException">device error will be throwed with STARException</exception>
-        public void Dispense(Container[] cnts, double volume, CLLDParameter parameter, DispenseMode mode = DispenseMode.FromLiquiClass, bool useFirstAspirtateLiquidClass = true, ErrorRecoveryOptions options=null)
+        public void Dispense(Container[] cnts, double volume, CLLDParameter parameter, DispenseMode mode = DispenseMode.FromLiquiClass, bool useFirstAspirtateLiquidClass = true, ErrorRecoveryOptions options = null)
         {
             PipettingParameter pt = SetParameter(parameter);
-            bool optimizZMove=(pt.ZMoveAfterDispense==ZMoveAfterDispense.Minimized);
+            bool optimizZMove = (pt.ZMoveAfterDispense == ZMoveAfterDispense.Minimized);
             Dispense(cnts, volume, pt, mode, useFirstAspirtateLiquidClass, false, optimizZMove, options);
         }
         /// <summary>
@@ -884,7 +928,7 @@ namespace Huarui.STARLine
             PipettingParameter[] parameters = new PipettingParameter[Count];
             for (int i = 0; i < parameters.Length; i++)
                 parameters[i] = parameter;
-            DispenseImpl(cnts, volumes, parameters, mode, useFirstAspirtateLiquidClass,sideTouch, optimizeZMove, options);
+            DispenseImpl(cnts, volumes, parameters, mode, useFirstAspirtateLiquidClass, sideTouch, optimizeZMove, options);
         }
         private void DispenseImpl(Container[] cnts, double[] volumes, PipettingParameter[] parameters, DispenseMode mode = DispenseMode.FromLiquiClass,
             bool useFirstAspirtateLiquidClass = true, bool sideTouch = false, bool optimizeZMove = false, ErrorRecoveryOptions options = null)
@@ -992,7 +1036,7 @@ namespace Huarui.STARLine
             {
                 Task chnTask = null;
                 if (_command.Simulator != null && _command.Simulator.Channel1000 != null && _command.IsSimulation)
-                    chnTask = _command.Simulator.Channel1000.Pipette(cnts, 0, -5);
+                    chnTask = _command.Simulator.Channel1000.Pipette(cnts, GetPipettPositions(cnts, volumes, parameters), GetFollowingHeights(cnts, volumes, parameters, false));
 
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, 2, objBounds) as HxPars;
@@ -1178,7 +1222,7 @@ namespace Huarui.STARLine
             {
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, 2, objBounds) as HxPars;
-                StepResult results= StepResult.Parse(result.Item2(HxCommandKeys.resultData, 3));
+                StepResult results = StepResult.Parse(result.Item2(HxCommandKeys.resultData, 3));
                 for (int i = 0; i < results.Blocks.Count; i++)
                     levels[i] = double.Parse(results.Blocks[i].StepData);
                 Util.ReleaseComObject(result);
@@ -1314,7 +1358,7 @@ namespace Huarui.STARLine
                 for (int i = 0; i < Count; i++)
                 {
                     string[] status = _command.SendFirmware("P" + i + "RA", "raau").Split(' ');
-                    _command.SendFirmware("P" + i + "AA", "au" + status[0] + " "+on+" " + status[2] + " " + status[3]);
+                    _command.SendFirmware("P" + i + "AA", "au" + status[0] + " " + on + " " + status[2] + " " + status[3]);
                 }
             }
         }
@@ -1342,12 +1386,12 @@ namespace Huarui.STARLine
             set
             {
                 int on = value ? 1 : 0;
-                _command.SendFirmware("PXAA", "bl"+on);
+                _command.SendFirmware("PXAA", "bl" + on);
             }
             get
             {
                 string reply = _command.SendFirmware("PXRA", "rabl");
-                string parameter = reply.Substring(reply.IndexOf("bl") + 2,1);
+                string parameter = reply.Substring(reply.IndexOf("bl") + 2, 1);
                 return "1".Equals(parameter);
             }
         }

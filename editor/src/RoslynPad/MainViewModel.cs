@@ -46,26 +46,28 @@ namespace RoslynPad
         }
         void CheckGit()
         {
+            IsGitInited = false;
             if (repository != null)
             {
                 repository.Dispose();
                 repository = null;
             }
-            var path = DocumentRoot.Path;
-            if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+            try
             {
-                var name = Repository.Discover(path);
-                if (!string.IsNullOrEmpty(name))
+                var path = DocumentRoot.Path;
+                if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
                 {
-                    repository = new Repository(name);
-                    repositroyPath = GetGitPath(name);
-                    LoadIgnore();
-                    AddIgnore();
-                    IsGitInited = true;
+                    var name = Repository.Discover(path);
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        repository = new Repository(name);
+                        repositroyPath = GetGitPath(name);
+                        LoadIgnore();
+                        AddIgnore();
+                    }
                 }
-            }
-            else
-                IsGitInited = false;
+            }catch { }
+            IsGitInited = repository!=null;
         }
         string GetGitPath(string name)
         {
@@ -286,12 +288,65 @@ ML_STAR.End();";
             OpenDocuments.Add(vm);
             CurrentOpenDocument = vm;
         }
+        public void CompareFileWithCurrent(string commitId, string path)
+        {
+            if (repository == null) return;
+            var vm = GitFileCompareViewModel.CompareFile(repository, commitId, path);
+            if (vm == null) return;
+            vm.Title = "Diff - " + path;
+            vm.MainViewModel = this;
+            OpenDocuments.Add(vm);
+            CurrentOpenDocument = vm;
+        }
+        public void CompareFileWithPreviouse(string commitId, string path)
+        {
+            if (repository == null) return;
+            List<string> commitIds = new List<string>();
+            foreach (var i in repository.Commits)
+            {
+                Tree commitTree = i.Tree;
+                var parentCommit = i.Parents.FirstOrDefault();
+                if (parentCommit == null)
+                {
+                    var record = i.Tree[path];
+                    if (record != null)
+                        commitIds.Add(i.Id + "");
+                }
+                else
+                {
+                    Tree parentCommitTree = parentCommit.Tree;
+                    var changes = repository.Diff.Compare<TreeChanges>(parentCommitTree, commitTree);
+                    foreach (var c in changes)
+                    {
+                        if (c.Status != ChangeKind.Deleted && c.Path == path)
+                            commitIds.Add(i.Id + "");
+                    }
+                }
+            }
+            int index = commitIds.IndexOf(commitId);
+            if (index < 0) return;
+            index++;
+            if (index >= commitIds.Count) return;
+            string previouseCommit = commitIds[index];
+            CompareFileWithCommits(commitId, path, previouseCommit);
+        }
+        public void CompareFileWithCommits(string commitId, string path, string previousCommitId)
+        {
+            if (repository == null) return;
+            var vm = GitFileCompareViewModel.CompareFile(repository, commitId, path, previousCommitId);
+            if (vm == null) return;
+            vm.Title = "Diff - " + path;
+            vm.MainViewModel = this;
+            OpenDocuments.Add(vm);
+            CurrentOpenDocument = vm;
+        }
         public void CompareFile(string path)
         {
             if (repository == null) return;
             var vm = GitFileCompareViewModel.CompareFile(repository, path);
             if (vm == null) return;
             vm.Title = "Diff - " + path;
+            vm.MainViewModel = this;
             OpenDocuments.Add(vm);
             CurrentOpenDocument = vm;
         }

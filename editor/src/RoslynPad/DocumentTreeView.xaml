@@ -9,7 +9,6 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:roslynPad="clr-namespace:RoslynPad"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance ui:MainViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300">
     <FrameworkElement.Resources>
@@ -164,12 +163,12 @@
             <Button ToolTip="Commit" Visibility="{Binding IsGitInited, Converter={StaticResource BooleanToVisibilityConverter}}" 
                     ToolTipService.Placement="Top"
                     Command="{Binding CommitCommand, Mode=OneTime}">
-                <Image Source="Resources/git-commit.png" Width="20" Height="20"/>
+                <Image Source="Resources/gitcommit.png" Width="20" Height="20"/>
             </Button>
             <Button ToolTip="Branch History" Visibility="{Binding IsGitInited, Converter={StaticResource BooleanToVisibilityConverter}}" 
                     ToolTipService.Placement="Top"
                     Command="{Binding BrachHistoryCommand, Mode=OneTime}">
-                <Image Source="Resources/code-branch.png" Width="20" Height="20"/>
+                <Image Source="Resources/codebranch.png" Width="20" Height="20"/>
             </Button>
         </ToolBar>
 

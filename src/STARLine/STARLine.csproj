@@ -109,11 +109,12 @@
     <Compile Include="Component\Channel\STARChannel.cs" />
     <Compile Include="Component\Channel\CoreTipType.cs" />
     <Compile Include="Component\Channel\PipettingParameter.cs" />
-    <Compile Include="Component\Channel\STARChannelEx.cs" />
+    <Compile Include="Component\Channel\STARChannelSeq.cs" />
     <Compile Include="Component\Channel\TADMUploadMode.cs" />
     <Compile Include="Component\Orbit\OrbitBarcodeReader.cs" />
     <Compile Include="Component\Channel\DispenseMode.cs" />
     <Compile Include="Deck\Container.cs" />
+    <Compile Include="Deck\ContainerSequence.cs" />
     <Compile Include="Deck\ContainerShapes.cs" />
     <Compile Include="Deck\DeckLayout.cs" />
     <Compile Include="Deck\LabwareAction.cs" />

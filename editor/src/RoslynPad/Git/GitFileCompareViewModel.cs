@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynPad.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,30 +93,113 @@ namespace RoslynPad
         public void Dispose()
         {
         }
-
+        /// <summary>
+        /// compare file between two commit
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="commitId"></param>
+        /// <param name="path"></param>
+        /// <param name="previousCommitId"></param>
+        /// <returns></returns>
+        public static GitFileCompareViewModel? CompareFile(Repository repository, string commitId, string path, string previousCommitId)
+        {
+            var commit = repository.Lookup<Commit>(commitId);
+            var prevCommit = repository.Lookup<Commit>(previousCommitId);
+            if (commit == null || prevCommit==null) return null;
+            var current = commit.Tree[path];
+            var previous = prevCommit.Tree[path];
+            if (current == null || previous == null) return null;
+            var currentBlob = current.Target as Blob;
+            var previousBlob = previous.Target as Blob;
+            if (currentBlob == null || previousBlob == null) return null;
+            var docs = PareComparePatch(repository, currentBlob, previousBlob);
+            docs.Item1.Title = path+";"+previousCommitId.Substring(0,8);
+            docs.Item2.Title = path + ";"+commitId.Substring(0,8);
+            return new GitFileCompareViewModel(path, docs.Item1, docs.Item2);
+        }
+        /// <summary>
+        /// compare file between commit and current
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="commitId"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static GitFileCompareViewModel? CompareFile(Repository repository, string commitId, string path)
+        {
+            var lastFile = repository.Lookup<Commit>(commitId).Tree[path];
+            if (lastFile == null) return null;
+            var current = repository.ObjectDatabase.CreateBlob(path);
+            var old = lastFile.Target as Blob;
+            if (old == null) return null;
+            var docs = PareComparePatch(repository, current, old);
+            docs.Item1.Title = path;
+            docs.Item2.Title = path + ";"+commitId.Substring(0,8);
+            return new GitFileCompareViewModel(path, docs.Item1, docs.Item2);
+        }
+        static CompareDocuemnt BlobToDoc(Blob blob)
+        {
+            CompareDocuemnt doc = new CompareDocuemnt();
+            using(var stream=new StreamReader(blob.GetContentStream()))
+            {
+                var line = "";
+                int index = 0;
+                while ((line = stream.ReadLine()) != null)
+                    doc.Add(new CompareLine(CompareAction.None, ++index, line));
+            }
+            return doc;
+        }
+        /// <summary>
+        /// compare file with head branch
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static GitFileCompareViewModel? CompareFile(Repository repository, string path)
         {
             var lastFile = repository.Head.Tip.Tree[path];
             if (lastFile == null) return null;
             var current = repository.ObjectDatabase.CreateBlob(path);
-            var compare = repository.Diff.Compare(lastFile.Target as Blob, current);
-            var patch = compare.Patch;
-            var docs = PareComparePatch(patch);
+            var old = lastFile.Target as Blob;
+            if (old == null) return null;
+            var docs = PareComparePatch(repository, current, old);
             docs.Item1.Title = path;
             docs.Item2.Title = path + ";HEAD";
             return new GitFileCompareViewModel(path, docs.Item1, docs.Item2);
         }
-        static Tuple<CompareDocuemnt, CompareDocuemnt> PareComparePatch(string patch)
+        static List<string> GetLinesFrom(Blob blob)
         {
-            Console.WriteLine(patch);
+            List<string> lines = new List<string>();
+            using (var stream = new StreamReader(blob.GetContentStream()))
+            {
+                var line = "";
+                while ((line = stream.ReadLine()) != null)
+                    lines.Add(line);
+            }
+            return lines;
+        }
+        static Tuple<CompareDocuemnt, CompareDocuemnt> PareComparePatch(Repository repository, Blob newBlob, Blob oldBob)
+        {
+            var compare = repository.Diff.Compare(oldBob, newBlob);
+            if (compare.LinesAdded == 0 && compare.LinesDeleted == 0)
+            {
+                var newDoc2 = BlobToDoc(newBlob);
+                var oldDoc2 = BlobToDoc(oldBob);
+                return new Tuple<CompareDocuemnt, CompareDocuemnt>(newDoc2, oldDoc2);
+            }
+            var patch = compare.Patch;
+            //Console.WriteLine(patch);
             var lines = patch.Split(new string[] {"\r\n", "\n" }, StringSplitOptions.None);
             CompareDocuemnt newDoc = new CompareDocuemnt();
             CompareDocuemnt oldDoc = new CompareDocuemnt();
+            var newLines = GetLinesFrom(newBlob);
+            var oldLines = GetLinesFrom(oldBob);
             int newLine = 0;
             int oldLine = 0;
             int newAdd = 0;
             int oldAdd = 0;
-            for (int i = 1; i < lines.Length; i++)
+            int newStart = 1;
+            int oldStart = 1;
+            for (int i = 0; i < lines.Length; i++)
             {
                 if (string.IsNullOrEmpty(lines[i])) continue;
                 char type = lines[i][0];
@@ -147,9 +231,40 @@ namespace RoslynPad
                     oldLine++;
                     oldDoc.Add(new CompareLine(CompareAction.Deleted, oldLine, content));
                 }
+                else if (type == '@')
+                {
+                    var indexLine = lines[i].Split(new string[] { "@@" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    var splits=indexLine.Split(new char[] { ' ',',' }, StringSplitOptions.RemoveEmptyEntries);
+                    var voldStart = -int.Parse(splits[0]);
+                    var voldLength = int.Parse(splits[1]);
+                    var vnewStart = int.Parse(splits[2]);
+                    var vnewLength = int.Parse(splits[3]);
+                    for(int j = oldStart; j < voldStart; j++)
+                    {
+                        oldLine++;
+                        oldAdd++;
+                        oldDoc.Add(new CompareLine(CompareAction.None, oldLine, oldLines[j-1]));
+                    }
+                    for(int j = newStart; j < vnewStart; j++)
+                    {
+                        newLine++;
+                        newAdd++;
+                        newDoc.Add(new CompareLine(CompareAction.None, newLine, newLines[j-1]));
+                    }
+                    oldStart = voldStart + voldLength;
+                    newStart = vnewStart + vnewLength;
+                }
             }
-            //Console.WriteLine(oldDoc.Text);
-            //Console.WriteLine(newDoc.Text);
+            for(int i = oldStart; i <= oldLines.Count; i++)
+            {
+                oldLine++;
+                oldDoc.Add(new CompareLine(CompareAction.None, oldLine, oldLines[i - 1]));
+            }
+            for(int i = newStart; i <= newLines.Count; i++)
+            {
+                newLine++;
+                newDoc.Add(new CompareLine(CompareAction.None, newLine, newLines[i - 1]));
+            }
             return new Tuple<CompareDocuemnt, CompareDocuemnt>(newDoc, oldDoc);
         }
     }

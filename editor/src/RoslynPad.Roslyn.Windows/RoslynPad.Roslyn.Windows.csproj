@@ -4,13 +4,16 @@
   <Import Project="$(MSBuildProjectDirectory)\obj\*.props" Condition=" '$(NuGetPackageRoot)' == '' and $(MSBuildProjectFile.Contains('wpftmp')) " />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <RootNamespace>RoslynPad.Roslyn</RootNamespace>
     <Version>$(RoslynAssemblyVersion)</Version>
     <PackageVersion>$(RoslynPackageVersion)</PackageVersion>
     <Description>Provides platform-specific (WPF) implementations for UI elements required by the RoslynPad.Roslyn package.</Description>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />

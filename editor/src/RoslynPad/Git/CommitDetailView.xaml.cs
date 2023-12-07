@@ -30,6 +30,42 @@ namespace RoslynPad
         {
             viewModel = args.NewValue as CommitChangesViewModel;
         }
+        private void OnComparePrevious(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)e.Source).DataContext is CommitChangesViewModel gitChangeModel)
+            {
+                string path = "";
+                if (gitChangeModel.IsFolder)
+                {
+                }
+                else
+                {
+                    path = gitChangeModel.Path;
+                    if (viewModel != null && viewModel.MainViewModel != null)
+                    {
+                        viewModel.MainViewModel.CompareFileWithPreviouse(viewModel.CommitId, path);
+                    }
+                }
+            }
+        }
+        private void OnCompareCurrent(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)e.Source).DataContext is CommitChangesViewModel gitChangeModel)
+            {
+                string path = "";
+                if (gitChangeModel.IsFolder)
+                {
+                }
+                else
+                {
+                    path = gitChangeModel.Path;
+                    if (viewModel != null && viewModel.MainViewModel != null)
+                    {
+                        viewModel.MainViewModel.CompareFileWithCurrent(viewModel.CommitId, path);
+                    }
+                }
+            }
+        }
         private void OnDocumentClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)

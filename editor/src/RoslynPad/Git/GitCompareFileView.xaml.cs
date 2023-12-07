@@ -36,6 +36,8 @@ namespace RoslynPad
             LeftEditor.TextArea.TextView.BackgroundRenderers.Add(leftBackgroundRenderer);
             LeftEditor.Text = viewModel.OldDocument.Text;
             LeftTitle.Content = viewModel.OldDocument.Title;
+            LeftEditor.TextArea.MouseWheel += OnEditorMouseWheel;
+            LeftEditor.FontSize = viewModel.MainViewModel.EditorFontSize;
 
             var rightMargin = new DiffInfoMargin(viewModel.NewDocument);
             var rightBackgroundRenderer = new DiffLineBackgroundRenderer(viewModel.NewDocument);
@@ -43,6 +45,13 @@ namespace RoslynPad
             RightEditor.TextArea.LeftMargins.Add(rightMargin);
             RightEditor.Text = viewModel.NewDocument.Text;
             RightTitle.Content = viewModel.NewDocument.Title;
+            RightEditor.TextArea.MouseWheel += OnEditorMouseWheel;
+            RightEditor.FontSize = viewModel.MainViewModel.EditorFontSize;
+        }
+
+        private void OnEditorMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            EditorScrollViewer.ScrollToVerticalOffset(EditorScrollViewer.VerticalOffset - e.Delta/5);
         }
     }
 }

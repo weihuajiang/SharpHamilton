@@ -79,18 +79,27 @@ var smp = ML_STAR.Deck["Smp"].Containers;
 var samples = new Container[] { smp["1"], smp["2"], smp["3"], smp["4"], smp["5"], smp["6"], smp["7"], smp["8"] };
 ```
 
-instrument control
+You can still use sequence defined in deck layout, or generate sequence from rack.
+```csharp
+var samples=ML_STAR.GetSequence("Sample");
+```csharp
+
+Both sequence or array of containers can be used for pipetting or tip handling. So you can programe with sequence like in Venus to control STAR,
 ```csharp
 ML_STAR = new STARCommand();
 ML_STAR.Init(deck, hwnd, false);
 ML_STAR.Start();
 ML_STAR.Initialize();
-ML_STAR.Channel.PickupTip(tips);
-ML_STAR.Channel.Aspirate(samples, 150, aspParam);
-ML_STAR.Channel.Dispense(samples, 150, dispParam);
-ML_STAR.Channel.EjectTip();
+while(samples.Current!=-1){
+    ML_STAR.Channel.PickupTip(tips);
+    ML_STAR.Channel.Aspirate(samples, 150, aspParam);
+    ML_STAR.Channel.Dispense(samples2, 150, dispParam);
+    ML_STAR.Channel.EjectTip();
+}
 ML_STAR.End();
 ```
+
+and you can use array of container for single step.
 
 venus-styled error handling. If recovery was set to cancel, the error will be throwed as STARException
 ```csharp

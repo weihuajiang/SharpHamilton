@@ -13,7 +13,7 @@
             <DockPanel Margin="0 2 0 2" VerticalAlignment="Center">
                 <ToggleButton Style="{StaticResource TreeListViewToggleStyle}" />
 
-                <Image Name="Icon"
+                <Image Name="Icon3"
                        Source="{StaticResource CsFile}"
                        Height="12"
                        Margin="0 0 3 0" />
@@ -23,22 +23,29 @@
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsFolder, Mode=OneTime}"
                              Value="True">
-                    <Setter TargetName="Icon"
+                    <Setter TargetName="Icon3"
                             Property="Source"
                             Value="{StaticResource Folder}" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
-        <Style x:Key="DocumentItemContainerStyle"
+        <ContextMenu x:Key="CommitDetailViewContextMenu"
+                     x:Shared="False">
+            <MenuItem Header="_Compare with Previous" Click="OnComparePrevious"/>
+            <MenuItem Header="Compare with Current" Click="OnCompareCurrent"/>
+        </ContextMenu>
+        <Style x:Key="CommitDetailViewContainerStyle"
                TargetType="controls:TreeListViewItem"
                BasedOn="{StaticResource {x:Type controls:TreeListViewItem}}">
             <EventSetter Event="MouseDoubleClick"
                          Handler="OnDocumentClick" />
+            <Setter Property="ContextMenu"
+                    Value="{StaticResource CommitDetailViewContextMenu}" />
         </Style>
     </UserControl.Resources>
     <Grid Margin="0,0,0,30">
         <controls:TreeListView x:Name="ChangeList" Margin="2, 2" ItemsSource="{Binding Children}"
-                               ItemContainerStyle="{StaticResource DocumentItemContainerStyle}"
+                               ItemContainerStyle="{StaticResource CommitDetailViewContainerStyle}"
                                ShowSeparator="False"/>  
     </Grid>
 </UserControl>

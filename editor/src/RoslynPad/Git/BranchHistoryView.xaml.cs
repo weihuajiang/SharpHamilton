@@ -29,7 +29,9 @@ namespace RoslynPad
 
         private void BranchHistoryView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            viewModel = e.NewValue as GitBranchHistoryViewModel;
+            viewModel = e.NewValue as GitBranchHistoryViewModel; 
+            if (viewModel == null || viewModel.MainViewModel == null) return;
+            if (viewModel.Type != BranchHistoryType.File) BranchHistory.ContextMenu=null;
             //if (viewModel != null && viewModel.MainViewModel != null)
             //    BranchHistory.FontSize = viewModel.MainViewModel.EditorFontSize;
         }
@@ -49,6 +51,31 @@ namespace RoslynPad
                     viewModel.MainViewModel.ShowCommitFile(item.FullId, viewModel.FilePath);
                 }
             }
+        }
+
+        private void OnMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+        }
+
+        private void OnCompareWithPrevious(object sender, RoutedEventArgs e)
+        {
+            var item = BranchHistory.SelectedItem as CommitItem;
+            if (item == null || viewModel == null || viewModel.MainViewModel == null) return;
+            if (viewModel.Type != BranchHistoryType.File) return;
+            int index = viewModel.Commits.IndexOf(item);
+            if (index < 0) return;
+            index++;
+            if (index >= viewModel.Commits.Count) return;
+            var pre = viewModel.Commits[index];
+            viewModel.MainViewModel.CompareFileWithCommits(item.FullId, viewModel.FilePath, pre.FullId);
+        }
+
+        private void OnCompareWithCurrent(object sender, RoutedEventArgs e)
+        {
+            var item = BranchHistory.SelectedItem as CommitItem;
+            if (item == null || viewModel == null || viewModel.MainViewModel == null) return;
+            if (viewModel.Type != BranchHistoryType.File) return;
+            viewModel.MainViewModel.CompareFileWithCurrent(item.FullId, viewModel.FilePath);
         }
     }
 }

@@ -112,7 +112,7 @@ namespace Huarui.STARLine
         /// Containers in rack
         /// </summary>
         public Dictionary<string, Container> Containers { get; internal set; } = new Dictionary<string, Container>();
-        Container[] SortedContainers = null;
+        internal Container[] SortedContainers = null;
         /// <summary>
         /// container rows
         /// </summary>
@@ -191,7 +191,7 @@ namespace Huarui.STARLine
         /// template file of deck layout
         /// </summary>
         public string DeckFileName { get; private set; } = null;
-        void CreateSortedContainer()
+        internal void CreateSortedContainer()
         {
             var cnts = Containers.Values.ToList();
             cnts.Sort((a, b) =>
@@ -264,6 +264,44 @@ namespace Huarui.STARLine
             for (int i = 0; i < all.Length; i++)
                 all[i] = SortedContainers[i];
             return all;
+        }
+        /// <summary>
+        /// get sequence from rack for tip handling or pipetting
+        /// </summary>
+        /// <returns></returns>
+        public ContainerSequence ToSequence()
+        {
+            if (SortedContainers == null) CreateSortedContainer();
+            ContainerSequence seq = new ContainerSequence();
+            for (int i = 0; i < SortedContainers.Length; i++)
+                seq.Add(SortedContainers[i]);
+            return seq;
+        }
+        /// <summary>
+        /// Get defined sequence in deck layout
+        /// </summary>
+        /// <param name="name">sequence name</param>
+        /// <returns>container sequence</returns>
+        public ContainerSequence GetSequence(string name)
+        {
+            if (instrumentDeck == null) return null;
+
+            object seqNames = new object();
+            instrumentDeck.DeckSequenceNames(ref seqNames);
+            var pars = new object();
+            instrumentDeck.Sequence(name, ref pars);
+            var seq = pars as Sequence;
+            if (seq == null) return null;
+            ContainerSequence sequence = new ContainerSequence();
+            for (int i = 1; i <= seq.Count; i++)
+            {
+                var item = (seq[i] as SeqItem);
+
+                sequence.Add(this[item.ObjectId].Containers[item.PositionId]);
+            }
+            sequence.Current = 1;
+            Util.ReleaseComObject(seq);
+            return sequence;
         }
         /// <summary>
         /// find rack or child rack with labware id

@@ -7,7 +7,20 @@
              xmlns:local="clr-namespace:RoslynPad"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <UserControl.Resources>
+        <Style TargetType="avalonEdit:TextEditor">
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FlowDirection" Value="LeftToRight"/>
+            <Setter Property="WordWrap" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+            <!-- AvalonEdit does not support RTL, so ensure we use LTR by default -->
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="0,0,0,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -18,16 +31,23 @@
         </Grid.ColumnDefinitions>
         <Label Name="LeftTitle" Grid.Column="0" Margin="2"/>
         <Label Name="RightTitle" Grid.Column="1" Margin="2"/>
-        <avalonEdit:TextEditor HorizontalAlignment="Stretch" Grid.Row="1"
-            Name="LeftEditor" ShowLineNumbers="False" IsReadOnly="True"
-            FontFamily="Consolas"
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Name="EditorScrollViewer"
+                       Grid.Row="1" Grid.ColumnSpan="2" Background="White">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                </Grid.ColumnDefinitions>
+                <avalonEdit:TextEditor Grid.Row="0"
+            Name="LeftEditor"
             SyntaxHighlighting="C#"
             FontSize="10pt"/>
-        <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1"
-            Name="RightEditor" ShowLineNumbers="False" IsReadOnly="True"
-            FontFamily="Consolas"
+                <avalonEdit:TextEditor Grid.Column="1" Grid.Row="1"
+            Name="RightEditor"
             SyntaxHighlighting="C#"
             FontSize="10pt"/>
-            
+
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>

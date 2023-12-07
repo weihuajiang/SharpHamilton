@@ -742,7 +742,7 @@ namespace RoslynPad.UI
                                 ? data.NewPath
                                 : Path.Combine(_documentRoot.Path, Path.Combine(pathParts.Take(index + 1).ToArray()));
                             Debug.Assert(currentPath != null);
-
+                            if (currentPath == null) return;
                             var newDocument = DocumentViewModel.FromPath(currentPath);
                             if (!newDocument.IsAutoSave &&
                                 IsRelevantDocument(newDocument))
@@ -761,6 +761,7 @@ namespace RoslynPad.UI
                         {
                             case DocumentFileChangeType.Renamed:
                                 Debug.Assert(data.NewPath != null);
+                                if (data.NewPath == null) return;
                                 current.ChangePath(data.NewPath);
                                 // move it to the correct place
                                 parent.InternalChildren.Remove(current);

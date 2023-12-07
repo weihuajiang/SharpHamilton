@@ -15,7 +15,7 @@
             <DockPanel Margin="0 2 0 2" VerticalAlignment="Center">
                 <ToggleButton Style="{StaticResource TreeListViewToggleStyle}" />
 
-                <Image Name="Icon"
+                <Image Name="Icon2"
                        Source="{StaticResource CsFile}"
                        Height="12"
                        Margin="0 0 3 0" />
@@ -25,26 +25,26 @@
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsFolder, Mode=OneTime}"
                              Value="True">
-                    <Setter TargetName="Icon"
+                    <Setter TargetName="Icon2"
                             Property="Source"
                             Value="{StaticResource Folder}" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </HierarchicalDataTemplate>
-        <ContextMenu x:Key="GitItemContextMenu"
+        <ContextMenu x:Key="CommitViewContextMenu"
                      x:Shared="False">
             <MenuItem Header="_Open"
                       Click="GitItemOpenClicked" />
             <MenuItem Header="_Compare with Unmodified" Click="GitCompareClicked"/>
             <MenuItem Header="_Ignore" Click="GitItemIgnoreClicked"/>
         </ContextMenu>
-        <Style x:Key="DocumentItemContainerStyle"
+        <Style x:Key="CommitViewContainerStyle"
                TargetType="controls:TreeListViewItem"
                BasedOn="{StaticResource {x:Type controls:TreeListViewItem}}">
             <EventSetter Event="MouseDoubleClick"
                          Handler="OnDocumentClick" />
             <Setter Property="ContextMenu"
-                    Value="{StaticResource GitItemContextMenu}" />
+                    Value="{StaticResource CommitViewContextMenu}" />
         </Style>
     </UserControl.Resources>
     <Grid Margin="0,0,0,30">
@@ -59,12 +59,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <xctk:WatermarkTextBox Margin="5,2" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="0" Watermark="please enter a message (required)" 
-                      x:Name="CommitComment" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="40"/>
+                      Name="CommitComment" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="40"/>
         <Button Margin="5,2" Padding="15,3" Name="CommitButton" Content="Commit" Grid.Row="1" Click="OnCommit"
                 IsEnabled="{Binding ElementName=CommitComment, Path=Text, Converter={StaticResource StringNotNullEmptyConverter}}"/>
         <Label Margin="5,2" Content="Changes" Grid.Row="2"/>
         <controls:TreeListView x:Name="ChangeList" Margin="5, 2" Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding Children}"
-                               ItemContainerStyle="{StaticResource DocumentItemContainerStyle}"
+                               ItemContainerStyle="{StaticResource CommitViewContainerStyle}"
                                ShowSeparator="False"/>
     </Grid>
 </UserControl>
