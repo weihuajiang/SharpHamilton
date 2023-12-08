@@ -35,13 +35,15 @@ To simplify application development with Hamilton STAR line. [Read more](WHY.md)
 * Support venus-styled error handling
 * Support fully manipulation of deck layout, rack and container
 * Low cost and high performance for no HxRun running and no inter process communiation between application and COM in HxRun
+* Support sequence and smart step, you can write venus styled script
 * Run in windows xp/7/10/11
 
 ## Progress
 * **Deck layout**: labware manipulation and volume computation
+* **Sequence**: use sequence in single step and smart step
 * **Master Module**: Initialize, Door, Firmware, Query carrier presence on deck
 * **Arm**: movemet of dual arm
-* **Channel**: Tip pickup, tip eject, aspirate, dispense, move, get last liquid level, set tip tracking speed, get exclude state, wait for TADM upload, ADC/MAD control
+* **Channel**: Tip pickup, tip eject, aspirate, dispense, move, get last liquid level, set tip tracking speed, get exclude state, wait for TADM upload, ADC/MAD control. Smart steps like venus were finished
 * **CORE-gripper** (under development)
 * **Autoload** (under development)
 * **5ml Channel** (under development)
@@ -72,7 +74,6 @@ discover = null;
 ```
 
 manipulation of deck layout, use array of containers instead of sequence
-
 ```csharp
 var labwPath = STARRegistry.LabwarePath;
 ML_STAR.Deck.AddLabwareToDeckSite(Path.Combine(labwPath, @"ML_STAR\SMP_CAR_32_12x75_A00.rck"), "1T-7", "Smp");
@@ -102,6 +103,12 @@ while(samples.Current!=-1){
 ML_STAR.End();
 ```
 
+or you can write script with smart step, only one step to finish the works above
+
+```csharp
+using Huarui.STARLine.SmartStep;
+ML_STAR.Simple(samples, samples2, 150, parameter, dparameter, tip);
+```
 and you can use array of container for single step.
 
 venus-styled error handling. If recovery was set to cancel, the error will be throwed as STARException

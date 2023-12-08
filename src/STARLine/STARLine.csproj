@@ -134,6 +134,7 @@
     <Compile Include="FirmwareException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simulator\IProtoclSimulator.cs" />
+    <Compile Include="SmartStep\SmartStepExtensions.cs" />
     <Compile Include="STARCommand.cs" />
     <Compile Include="STARDiscover.cs" />
     <Compile Include="STAREventHandler.cs" />

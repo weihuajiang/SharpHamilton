@@ -23,9 +23,30 @@ namespace Huarui.STARLine
     /// advanced parameter for liquid following and mix
     /// </summary>
     public class AdvancedParameter
-    {/// <summary>
-     /// liquid follow during aspirate or dispense or mix
-     /// </summary>
+    {
+        /// <summary>
+        /// constructor for advanced parameter
+        /// </summary>
+        public AdvancedParameter() { }
+        /// <summary>
+        /// constructor for advanced parameter
+        /// </summary>
+        /// <param name="liquidFollowing">liquid following</param>
+        /// <param name="mixCycle">mix cycle</param>
+        /// <param name="mixPosition">mix position</param>
+        /// <param name="mixVolume">mix volume</param>
+        /// <param name="zMoveAfterDispense">z move after dispense</param>
+        public AdvancedParameter(bool liquidFollowing, int mixCycle = 0, double mixPosition = 0, double mixVolume = 0, ZMoveAfterDispense zMoveAfterDispense = ZMoveAfterDispense.Normal)
+        {
+            LiquidFollowing = liquidFollowing;
+            MixCycle = mixCycle;
+            MixPosition = mixPosition;
+            MixVolume = mixVolume;
+            ZMOveAfterDispense = zMoveAfterDispense;
+        }
+        /// <summary>
+        /// liquid follow during aspirate or dispense or mix
+        /// </summary>
         public bool LiquidFollowing
         {
             get; set;

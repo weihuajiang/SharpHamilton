@@ -12,23 +12,58 @@ namespace Huarui.STARLine
     public class ContainerSequence : List<Container>
     {
         int? _end = null;
+        int _current = 1;
         /// <summary>
         /// Current Position, like current position of sequence, 1 based
         /// </summary>
-        public int Current { get; set; } = 1;
+        public int Current
+        {
+            get
+            {
+                if (_current <= 0 || _current > End)
+                {
+                    _current = -1;
+                    return -1;
+                }
+                return _current;
+            }
+            set
+            {
+                _current = value;
+                if (_current <= 0 || _current > End)
+                {
+                    _current = -1;
+                }
+            }
+        }
         /// <summary>
         /// End position, like end position of sequence
         /// </summary>
-        public int End { get
+        public int End
+        {
+            get
             {
                 if (_end == null) return Count;
                 if (_end > Count) return -1;
                 if (_end <= 0) return -1;
                 return _end.Value;
             }
-            set { _end = value;
-                if (_end > Count) _end= -1;
-                if (_end <= 0) _end= -1;
+            set
+            {
+                _end = value;
+                if (_end > Count) _end = -1;
+                if (_end <= 0) _end = -1;
+            }
+        }
+        /// <summary>
+        /// Positions left in sequence
+        /// </summary>
+        public int PositionsLeft
+        {
+            get
+            {
+                if (Current == -1 || End == -1) return 0;
+                return End - Current + 1;
             }
         }
         /// <summary>
@@ -51,7 +86,7 @@ namespace Huarui.STARLine
         public Container[] Get(int size)
         {
             Container[] cnts = new Container[size];
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 if (Current + i >= 1 && Current + i < End)
                     cnts[i] = this[Current + i - 1];
