@@ -175,7 +175,41 @@ namespace RoslynPad.Hosting
                 IOUtilities.PerformIO(() => File.Delete(file));
             }
         }
+        public async Task ExecuteAsync2(string code, bool disaseemble, OptimizationLevel? optimizationLevel)
+        {
+            await new NoContextYieldAwaitable();
+            try
+            {
+                _running = true;
 
+                using var executeCts = new CancellationTokenSource();
+                var cancellationToken = executeCts.Token;
+
+                _assemblyPath = Path.Combine(BuildPath, $"RoslynPad-{Name}.dll");
+
+                //CopyDependencies();
+
+                var script = CreateScriptRunner(code, optimizationLevel, OutputKind.ConsoleApplication);
+                //var diagnostics = await script.SaveAssembly(_assemblyPath, cancellationToken).ConfigureAwait(false);
+                await script.RunAsync(cancellationToken);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            finally
+            {
+                _executeCts = null;
+                _running = false;
+
+                if (_initializeBuildPathAfterRun)
+                {
+                    _initializeBuildPathAfterRun = false;
+                    InitializeBuildPath(stop: false);
+                }
+            }
+        }
         public async Task ExecuteAsync(string code, bool disassemble, OptimizationLevel? optimizationLevel)
         {
             await new NoContextYieldAwaitable();
@@ -294,7 +328,7 @@ namespace RoslynPad.Hosting
             return false;
         }
 
-        private ScriptRunner CreateScriptRunner(string code, OptimizationLevel? optimizationLevel)
+        private ScriptRunner CreateScriptRunner(string code, OptimizationLevel? optimizationLevel, OutputKind outputKind= OutputKind.ConsoleApplication)
         {
             Platform platform = Platform.Architecture == Architecture.X86
                 ? Microsoft.CodeAnalysis.Platform.AnyCpu32BitPreferred
@@ -303,7 +337,7 @@ namespace RoslynPad.Hosting
             return new ScriptRunner(code: null,
                                     syntaxTrees: ImmutableList.Create(InitHostSyntax, ParseCode(code)),
                                     _parseOptions,
-                                    OutputKind.ConsoleApplication,
+                                    outputKind,
                                     platform,
                                     _scriptOptions.MetadataReferences,
                                     _scriptOptions.Imports,

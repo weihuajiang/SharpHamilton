@@ -743,6 +743,9 @@ namespace RoslynPad.UI
                                 : Path.Combine(_documentRoot.Path, Path.Combine(pathParts.Take(index + 1).ToArray()));
                             Debug.Assert(currentPath != null);
                             if (currentPath == null) return;
+                            var dir = new DirectoryInfo(currentPath);
+                            var att = dir.Attributes;
+                            if (((int)att & (int)FileAttributes.Hidden) > 0) break;
                             var newDocument = DocumentViewModel.FromPath(currentPath);
                             if (!newDocument.IsAutoSave &&
                                 IsRelevantDocument(newDocument))

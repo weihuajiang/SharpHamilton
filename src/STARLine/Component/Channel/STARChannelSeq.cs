@@ -8,10 +8,19 @@ using Container = Huarui.STARLine.Container;
 
 namespace Huarui.STARLine
 {
+    /// <summary>
+    /// Channel use 
+    /// </summary>
     public enum ChannelUseType
     {
-        AllPosition=1,
-        ChannelPattern=2,
+        /// <summary>
+        /// all position in sequence will be used
+        /// </summary>
+        AllPosition = 1,
+        /// <summary>
+        /// position according to channel pattern will be used.
+        /// </summary>
+        ChannelPattern = 2,
     }
     public partial class Channel
     {
@@ -24,7 +33,7 @@ namespace Huarui.STARLine
         /// <param name="useType">channel use type</param>
         /// <param name="options">error handling options</param>
         /// <exception cref="STARException">device error will be throwed with STARException</exception>
-        public void PickupTip(ContainerSequence tips, bool autoCounting = true, string pattern = null, ChannelUseType useType= ChannelUseType.AllPosition, ErrorRecoveryOptions options = null)
+        public void PickupTip(ContainerSequence tips, bool autoCounting = true, string pattern = null, ChannelUseType useType = ChannelUseType.AllPosition, ErrorRecoveryOptions options = null)
         {
             if (tips.Current <= 0 || tips.End == 0 || tips.Count == 0) throw new Exception("no positions in sequence");
             //string pattern = "";
@@ -33,7 +42,7 @@ namespace Huarui.STARLine
             if (pattern == null)
             {
                 pattern = "";
-                for (int i = 0; i < Math.Min( count, tips.End-tips.Current+1); i++)
+                for (int i = 0; i < Math.Min(count, tips.End - tips.Current + 1); i++)
                     pattern = pattern + "1";
             }
             if (pattern.Length < count)
@@ -43,7 +52,7 @@ namespace Huarui.STARLine
             }
             IEditSequence2 seqc = new Sequence() as IEditSequence2;
             int index = 0;
-            for (int i = tips.Current-1; i < tips.End; i++)
+            for (int i = tips.Current - 1; i < tips.End; i++)
             {
                 Container c = tips[i];
                 if (c != null)
@@ -58,10 +67,10 @@ namespace Huarui.STARLine
             }
             var tipsForSim = new Container[count];
             int nullNumber = 0;
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 index = tips.Current + i;
-                if (pattern[i]=='1' && index <= tips.End && tips[index - 1] != null)
+                if (pattern[i] == '1' && index <= tips.End && tips[index - 1] != null)
                 {
                     channel.Add(1);
                     tipsForSim[i] = tips[index - 1];
@@ -111,7 +120,7 @@ namespace Huarui.STARLine
                     chnTask = _command.Simulator.Channel1000.PickupTips(tipsForSim);
                 _command.ClearErrorForTask(channelTask);
                 HxPars result = srd.Command.Run(_command.InstrumentName, instanceId, channelTask, objBounds) as HxPars;
-                if(autoCounting)
+                if (autoCounting)
                     tips.Increment(result.Item2(HxCommandKeys.sequenceData, _command.InstrumentName + "." + PXSequence));
                 //Util.TraceIHxPars(result);
                 Util.ReleaseComObject(result);
@@ -333,6 +342,7 @@ namespace Huarui.STARLine
             PipettingParameter pt = SetParameter(parameter);
             Aspirate(cnts, volumes, pt, mode, autoCounting, pattern, useType, options);
         }
+
         /// <summary>
         /// aspirate with fix height
         /// </summary>
@@ -340,7 +350,7 @@ namespace Huarui.STARLine
         /// <param name="volume">liquid volume</param>
         /// <param name="parameter">fix height parameter</param>
         /// <param name="mode">aspirate mode</param>
-        //// <param name="autoCounting">automatic counting of sequence</param>
+        /// <param name="autoCounting">automatic counting of sequence</param>
         /// <param name="pattern">channel pattern</param>
         /// <param name="useType">use type of channel</param>
         /// <param name="options">error recovery options</param>
@@ -373,6 +383,7 @@ namespace Huarui.STARLine
         /// <param name="cnts">aspirate positions</param>
         /// <param name="volume">liquid volume</param>
         /// <param name="parameter">touch off parameter</param>
+        /// <param name="mode">aspirate mode</param>
         /// <param name="autoCounting">automatic counting of sequence</param>
         /// <param name="pattern">channel pattern</param>
         /// <param name="useType">use type of channel</param>
@@ -447,13 +458,14 @@ namespace Huarui.STARLine
             }
             var cntsForSim = new Container[count];
             int nullNumber = 0;
+            index = cnts.Current;
             for (int i = 0; i < count; i++)
             {
-                index = cnts.Current + i;
                 if (pattern[i] == '1' && index <= cnts.End && cnts[index - 1] != null)
                 {
                     channel.Add(1);
                     cntsForSim[i] = cnts[index - 1];
+                    index++;
                 }
                 else
                 {
@@ -826,13 +838,14 @@ namespace Huarui.STARLine
             }
             var cntsForSim = new Container[count];
             int nullNumber = 0;
+            index = cnts.Current;
             for (int i = 0; i < count; i++)
             {
-                index = cnts.Current + i;
                 if (pattern[i] == '1' && index <= cnts.End && cnts[index - 1] != null)
                 {
                     channel.Add(1);
                     cntsForSim[i] = cnts[index - 1];
+                    index++;
                 }
                 else
                 {

@@ -4,7 +4,8 @@
   <Import Project="$(MSBuildProjectDirectory)\obj\*.props" Condition=" '$(NuGetPackageRoot)' == '' and $(MSBuildProjectFile.Contains('wpftmp')) " />
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>WinExe</OutputType>
+        <OutputType>WinExe</OutputType>
+        <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
     <ExtrasEnableWpfProjectSetup>true</ExtrasEnableWpfProjectSetup>
     <ApplicationIcon>icon6.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>

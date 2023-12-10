@@ -17,25 +17,14 @@ LLDsParameter parameter = new LLDsParameter()
 {
     cLLDSensitivity = LLDSensitivity.LabwareDefinition,
     SubmergeDepth = 2,
-    LiquidClassParameter = new LiquidClassParameter()
-    {
-        TipType = CoreTipType.StandardVolumeTipFiltered,
-        DispenseMode = DispenseMode.JetPart,
-        LiquidClass = liquidClass
-    }
+    LiquidClassParameter = new LiquidClassParameter(CoreTipType.StandardVolumeTipFiltered, DispenseMode.JetPart, liquidClass)
 };
 FixHeightParameter dparameter = new FixHeightParameter()
 {
     FixHeight = 15,
     RetractDistanceForAirTransport = 5,
-    LiquidClassParameter = new LiquidClassParameter()
-    {
-        TipType = CoreTipType.StandardVolumeTipFiltered,
-        DispenseMode = DispenseMode.JetPart,
-        LiquidClass = liquidClass
-    }
+    LiquidClassParameter = new LiquidClassParameter(CoreTipType.StandardVolumeTipFiltered, DispenseMode.JetPart, liquidClass)
 };
 ML_STAR.Aliquot(rgt, plate1, 10, parameter, dparameter, tip, "1");
-plate1.Current = 1;
 ML_STAR.Simple(plate1, plate2, 100, parameter, dparameter, tip);
 ML_STAR.End();

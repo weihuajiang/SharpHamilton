@@ -34,7 +34,7 @@ namespace RoslynPad
         internal MainWindow()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
-            //AllocConsole();
+            AllocConsole();
             Loaded += OnLoaded;
 
             var container = new ContainerConfiguration()

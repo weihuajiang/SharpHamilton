@@ -119,8 +119,7 @@ ML_STAR.End();";
         }
         protected override ImmutableArray<Assembly> CompositionAssemblies => base.CompositionAssemblies
             .Add(Assembly.Load(new AssemblyName("RoslynPad.Roslyn.Windows")))
-            .Add(Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows")))
-            .Add(Assembly.Load(new AssemblyName("Huarui.STARLine")));
+            .Add(Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows")));
         protected override ImmutableArray<Type> TypeNamespaceImports => base.TypeNamespaceImports
             .Add(typeof(Huarui.STARLine.STARCommand));
 
