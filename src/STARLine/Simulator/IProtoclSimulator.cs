@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Huarui.STARLine
 {
-    public interface IProtoclSimulator
+    internal interface IProtoclSimulator
     {
         void Start(STARCommand device);
         void End();
@@ -16,27 +16,62 @@ namespace Huarui.STARLine
         Task Initialize();
         Task SendFirmware(string command, string parameter);
     }
-    public interface ICoreGripperSimulator
+    /// <summary>
+    /// inteface for CORE gripper simulator
+    /// </summary>
+    internal interface ICoreGripperSimulator
     {
         /// <summary>
         /// pick up gripper
         /// </summary>
+        /// <param name="gripper">gripper rack</param>
         /// <param name="frontChannel">front channel, zero based</param>
         /// <returns></returns>
-        Task PickupGripper(int frontChannel);
+        Task PickupGripper(Rack gripper, int frontChannel);
+        /// <summary>
+        /// eject gripper
+        /// </summary>
+        /// <returns></returns>
         Task EjectGripper();
-        Task Get(Rack rack, int frontChannel, double gripHeight, double gripWidth, double openWidth);
+        /// <summary>
+        /// get plate
+        /// </summary>
+        /// <param name="rack"></param>
+        /// <param name="gripper">rack for core gripper. If it is null, system will search for available gripper rack</param>
+        /// <param name="frontChannel"></param>
+        /// <param name="gripHeight"></param>
+        /// <param name="gripWidth"></param>
+        /// <param name="openWidth"></param>
+        /// <returns></returns>
+        Task Get(Rack rack, Rack gripper, int frontChannel, double gripHeight, double gripWidth, double openWidth);
+        /// <summary>
+        /// place plate
+        /// </summary>
+        /// <param name="rack"></param>
+        /// <param name="ejectGripper"></param>
+        /// <returns></returns>
         Task Place(Rack rack, bool ejectGripper);
+        /// <summary>
+        /// move plate to rack
+        /// </summary>
+        /// <param name="rack"></param>
+        /// <returns></returns>
         Task Move(Rack rack);
+        /// <summary>
+        /// read barcode with autoload
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         Task ReadBarcode(int track, double height);
     }
-    public interface IAutoloadSimulator
+    internal interface IAutoloadSimulator
     {
         Task Load(Rack rack);
         Task Unload(Rack rack);
         Task Move(int track);
     }
-    public interface IPipettingChannelSimulator
+    internal interface IPipettingChannelSimulator
     {
         Task PickupTips(Container[] tips);
         Task Pipette(Container[] containers, double position, double followHeight);

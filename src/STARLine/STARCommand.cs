@@ -82,7 +82,7 @@ namespace Huarui.STARLine
         /// <summary>
         /// simulator for STAR control
         /// </summary>
-        public IProtoclSimulator Simulator { get; set; } = null;
+        internal IProtoclSimulator Simulator { get; set; } = null;
 
         //Error handling to get the error
         internal Dictionary<int, ModuleErrors> Errors = new Dictionary<int, ModuleErrors>();
@@ -124,6 +124,14 @@ namespace Huarui.STARLine
             }
         }
         #region Components
+        /// <summary>
+        /// CORE gripper
+        /// </summary>
+        public CoreGripper CoreGripper
+        {
+            private set;
+            get;
+        }
         /// <summary>
         /// Pipetting channel 1000ul
         /// </summary>
@@ -282,6 +290,7 @@ namespace Huarui.STARLine
         {
             try
             {
+                CoreGripper = null;
                 Channel = null;
                 LeftArm = null;
                 RightArm = null;
@@ -565,6 +574,7 @@ namespace Huarui.STARLine
                 srd.Command.InitCommandStepRun(StepRunCfg, MlSTAR);
             }
             //initize the component value
+            CoreGripper = new CoreGripper(this);
             Channel = new Channel(this);
             LeftArm = new LeftArm(this);
             RightArm = new RightArm(this);

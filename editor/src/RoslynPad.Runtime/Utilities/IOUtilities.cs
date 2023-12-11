@@ -130,7 +130,6 @@ namespace RoslynPad.Utilities
                     var dir = new DirectoryInfo(enumerator.Current);
                     var att = dir.Attributes;
                     if (((int)att & (int)FileAttributes.Hidden) > 0) continue;
-                    //if (dir.Name.StartsWith(".")) continue;
                     yield return enumerator.Current;
                 }
             }

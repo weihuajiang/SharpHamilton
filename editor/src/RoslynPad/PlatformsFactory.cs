@@ -21,12 +21,12 @@ namespace RoslynPad
             var dotnetExe = Path.Combine(dotnetPath, "dotnet.exe");
             if (File.Exists(dotnetExe))
             {
-                yield return new ExecutionPlatform("Core x64", "", GetCoreVersions(dotnetPath), Architecture.X64, dotnetExe, string.Empty);
+                //yield return new ExecutionPlatform("Core x64", "", GetCoreVersions(dotnetPath), Architecture.X64, dotnetExe, string.Empty);
             }
 
             var targetFrameworkName = GetTargetFrameworkName();
             yield return new ExecutionPlatform("Desktop x86", targetFrameworkName, Array.Empty<PlatformVersion>(), Architecture.X86, string.Empty, string.Empty, isDesktop: true);
-            yield return new ExecutionPlatform("Desktop x64", targetFrameworkName, Array.Empty<PlatformVersion>(), Architecture.X64, string.Empty, string.Empty, isDesktop: true);
+            //yield return new ExecutionPlatform("Desktop x64", targetFrameworkName, Array.Empty<PlatformVersion>(), Architecture.X64, string.Empty, string.Empty, isDesktop: true);
         }
 
         private IReadOnlyList<PlatformVersion> GetCoreVersions(string dotnetPath)

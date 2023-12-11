@@ -9,11 +9,6 @@
     <Version>$(RoslynAssemblyVersion)</Version>
     <PackageVersion>$(RoslynPackageVersion)</PackageVersion>
     <Description>Provides platform-specific (WPF) implementations for UI elements required by the RoslynPad.Roslyn package.</Description>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />

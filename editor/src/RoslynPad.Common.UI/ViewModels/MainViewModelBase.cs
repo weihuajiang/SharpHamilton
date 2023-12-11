@@ -81,7 +81,7 @@ namespace RoslynPad.UI
             NewDocumentCommand = commands.Create(CreateNewDocument);
             OpenFileCommand = commands.CreateAsync(OpenFile);
             CloseCurrentDocumentCommand = commands.CreateAsync(CloseCurrentDocument);
-            CloseDocumentCommand = commands.CreateAsync<OpenDocumentViewModel>(CloseDocument);
+            CloseDocumentCommand = commands.CreateAsync<IOpenDocumentViewModel>(CloseDocument);
             ClearErrorCommand = commands.Create(() => _telemetryProvider.ClearLastError());
             ReportProblemCommand = commands.Create(ReportProblem);
             EditUserDocumentPathCommand = commands.Create(EditUserDocumentPath);
@@ -115,6 +115,7 @@ namespace RoslynPad.UI
             typeof(MainViewModelBase).Assembly);
         protected virtual ImmutableArray<Type> TypeNamespaceImports => ImmutableArray.Create(typeof(Runtime.ObjectExtensions));
 
+
         private async Task InitializeInternal()
         {
             RoslynHost = await Task.Run(() => new RoslynHost(CompositionAssemblies,
@@ -122,9 +123,9 @@ namespace RoslynPad.UI
                 disabledDiagnostics: ImmutableArray.Create("CS1701", "CS1702")))
                 .ConfigureAwait(true);
 
-            if(!OpenDocumentFromCommandLine())
-                await OpenAutoSavedDocuments().ConfigureAwait(true);
-
+            OpenDocumentFromCommandLine();
+            await OpenAutoSavedDocuments().ConfigureAwait(true);
+            /*
             if (HasCachedUpdate())
             {
                 HasUpdate = true;
@@ -133,10 +134,10 @@ namespace RoslynPad.UI
             {
                 // ReSharper disable once UnusedVariable
                 var task = Task.Run(CheckForUpdates);
-            }
+            }*/
         }
 
-        private bool OpenDocumentFromCommandLine()
+        private void OpenDocumentFromCommandLine()
         {
             string[] args = Environment.GetCommandLineArgs();
 
@@ -148,10 +149,8 @@ namespace RoslynPad.UI
                 {
                     var document = DocumentViewModel.FromPath(filePath);
                     OpenDocument(document);
-                    return true;
                 }
             }
-            return false;
         }
 
         private async Task OpenAutoSavedDocuments()
@@ -388,7 +387,6 @@ namespace RoslynPad.UI
             {
                 return;
             }
-
             var result = await document.Save(promptSave: true).ConfigureAwait(true);
             if (result == SaveResult.Cancel)
             {
@@ -764,7 +762,6 @@ namespace RoslynPad.UI
                         {
                             case DocumentFileChangeType.Renamed:
                                 Debug.Assert(data.NewPath != null);
-                                if (data.NewPath == null) return;
                                 current.ChangePath(data.NewPath);
                                 // move it to the correct place
                                 parent.InternalChildren.Remove(current);

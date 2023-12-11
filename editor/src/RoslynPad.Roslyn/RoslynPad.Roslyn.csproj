@@ -7,8 +7,6 @@
     <Version>$(RoslynAssemblyVersion)</Version>
     <PackageVersion>$(RoslynPackageVersion)</PackageVersion>
     <Description>Exposes many Roslyn editor services that are currently internal. The version of this package corresponds to the Roslyn packages.</Description>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.4.0" PrivateAssets="All" />

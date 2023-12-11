@@ -111,6 +111,10 @@
     <Compile Include="Component\Channel\PipettingParameter.cs" />
     <Compile Include="Component\Channel\STARChannelSeq.cs" />
     <Compile Include="Component\Channel\TADMUploadMode.cs" />
+    <Compile Include="Component\CoreGripper\GripperForce.cs" />
+    <Compile Include="Component\CoreGripper\GripperXAccelerationLevel.cs" />
+    <Compile Include="Component\CoreGripper\STARCoreGripper.cs" />
+    <Compile Include="Component\CoreGripper\TransportMode.cs" />
     <Compile Include="Component\Orbit\OrbitBarcodeReader.cs" />
     <Compile Include="Component\Channel\DispenseMode.cs" />
     <Compile Include="Deck\Container.cs" />

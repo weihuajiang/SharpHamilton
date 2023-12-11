@@ -6,7 +6,6 @@
              xmlns:controls="clr-namespace:RoslynPad.Controls"
              xmlns:ui="clr-namespace:RoslynPad.UI;assembly=RoslynPad.Common.UI"
              xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows"
-             xmlns:local="clr-namespace:RoslynPad"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance ui:OpenDocumentViewModel}">
     <UserControl.Resources>
@@ -43,7 +42,7 @@
         <StatusBar DockPanel.Dock="Bottom" Background="Transparent" >
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <DockPanel LastChildFill="False"/>
+                    <DockPanel LastChildFill="False" />
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem>
@@ -238,14 +237,14 @@
                         ToolTip="Rename Symbol (F2)"
                         Command="{Binding RenameSymbolCommand, Mode=OneTime}" />
             </ToolBar>
-            <editor:RoslynCodeEditor x:Name="Editor" 
+            <editor:RoslynCodeEditor x:Name="Editor"
                                      x:FieldModifier="private"
                                      ContextActionsIcon="{StaticResource Bulb}"
                                      IsBraceCompletionEnabled="{Binding MainViewModel.Settings.EnableBraceCompletion}"
                                      FontFamily="Consolas"
                                      Grid.Row="1"
                                      Grid.Column="0"
-                                     Loaded="Editor_OnLoaded" TextChanged="EditorTextChanged" />
+                                     Loaded="Editor_OnLoaded" />
             <GridSplitter Grid.Row="2"
                           Grid.Column="0"
                           Background="#ccc"

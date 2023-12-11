@@ -121,7 +121,7 @@ namespace RoslynPad.UI
         }
         public void Dispose()
         {
-            if(_results!=null)
+            if (_results != null)
             {
                 _results.Clear();
             }
@@ -156,13 +156,8 @@ namespace RoslynPad.UI
             NuGet.RestoreCompleted += OnNuGetRestoreCompleted;
 
             _dispatcher = appDispatcher;
-            List<ExecutionPlatform> platforms = new List<ExecutionPlatform>();
-            foreach (var f in serviceProvider.GetService<IPlatformsFactory>()
-                .GetExecutionPlatforms())
-                if (f.IsDesktop && f.Architecture == Architecture.X86)
-                    platforms.Add(f);
-            AvailablePlatforms = platforms.ToImmutableArray();
-
+            AvailablePlatforms = serviceProvider.GetService<IPlatformsFactory>()
+                .GetExecutionPlatforms().ToImmutableArray();
 
             OpenBuildPathCommand = commands.Create(() => OpenBuildPath());
             SaveCommand = commands.CreateAsync(() => Save(promptSave: false));

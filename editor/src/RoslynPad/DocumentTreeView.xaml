@@ -9,9 +9,11 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:roslynPad="clr-namespace:RoslynPad"
              mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance ui:MainViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300">
     <FrameworkElement.Resources>
+
         <Style x:Key="{x:Type ToolBar}" TargetType="{x:Type ToolBar}">
             <Setter Property="OverridesDefaultStyle" Value="true"/>
             <Setter Property="Template">
@@ -125,7 +127,7 @@
         <controls:TreeListView Grid.Row="1"
                                ShowSeparator="False"
                                ItemContainerStyle="{StaticResource DocumentItemContainerStyle}"
-                               ItemsSource="{Binding DocumentRoot.Children, Converter={StaticResource FilterCollectionViewConverter}, NotifyOnSourceUpdated=True}" />
+                               ItemsSource="{Binding DocumentRoot.Children, Converter={StaticResource FilterCollectionViewConverter}}" />
 
         <ToolBar Grid.Row="2" ToolBarTray.IsLocked="True"
                  Background="Transparent"

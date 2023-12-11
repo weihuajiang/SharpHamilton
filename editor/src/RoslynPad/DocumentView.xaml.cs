@@ -39,17 +39,17 @@ namespace RoslynPad
             _syncContext = SynchronizationContext.Current;
 
             DataContextChanged += OnDataContextChanged;
-            foldingManager=ICSharpCode.AvalonEdit.Folding.FoldingManager.Install(Editor.TextArea);
+            foldingManager = ICSharpCode.AvalonEdit.Folding.FoldingManager.Install(Editor.TextArea);
+            Editor.TextChanged += EditorTextChanged;
         }
 
         FoldingManager foldingManager;
-        BraceFoldingStrategy foldingStrategy=new BraceFoldingStrategy();
+        BraceFoldingStrategy foldingStrategy = new BraceFoldingStrategy();
         private void EditorTextChanged(object sender, EventArgs e)
         {
             if (foldingManager == null) return;
             foldingStrategy.UpdateFoldings(foldingManager, Editor.Document);
         }
-
         private void CaretOnPositionChanged(object sender, EventArgs eventArgs)
         {
             Ln.Text = Editor.TextArea.Caret.Line.ToString();
@@ -90,7 +90,10 @@ namespace RoslynPad
                 () => new TextSpan(Editor.SelectionStart, Editor.SelectionLength),
                 this);
 
-            Editor.Document.TextChanged += (o, e) => _viewModel.OnTextChanged();
+            Editor.Document.TextChanged += (o, e) =>
+            {
+                _viewModel.OnTextChanged();
+            };
         }
 
         private void ResultsAvailable()

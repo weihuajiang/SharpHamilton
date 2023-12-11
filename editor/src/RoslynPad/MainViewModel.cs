@@ -3,18 +3,18 @@ using System.Composition;
 using System.Reflection;
 using RoslynPad.UI;
 using System.Collections.Immutable;
-using System.Threading.Tasks;
 using RoslynPad.Utilities;
 using LibGit2Sharp;
 using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace RoslynPad
 {
     [Export(typeof(MainViewModelBase)), Shared]
-    public class MainViewModel : MainViewModelBase, IDisposable
+    public class MainViewModel : MainViewModelBase
     {
         bool gitInited = false;
 
@@ -28,7 +28,6 @@ namespace RoslynPad
         public IDelegateCommand BrachHistoryCommand { get; }
         Repository? repository;
         string repositroyPath;
-
         [ImportingConstructor]
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public MainViewModel(IServiceProvider serviceProvider, ITelemetryProvider telemetryProvider, ICommandProvider commands, IApplicationSettings settings, NuGetViewModel nugetViewModel, DocumentFileWatcher documentFileWatcher) : base(serviceProvider, telemetryProvider, commands, settings, nugetViewModel, documentFileWatcher)
@@ -39,6 +38,56 @@ namespace RoslynPad
             BrachHistoryCommand = commands.Create(ViewBranchHistory);
             CheckGit();
         }
+        public override void CreateNewDocument()
+        {
+            var openDocument = GetOpenDocumentViewModel(null);
+            openDocument.DefaultCode = @"var ML_STAR=new STARCommand();
+//ML_STAR.Init(@""C:\Program Files(x86)\HAMILTON\Methods\Test\SystemEditor3d.lay"", 0, true);
+ML_STAR.Init(true);
+//ML_STAR.Show3DSystemView();//show 3D deck layout
+ML_STAR.Start();
+ML_STAR.Initialize();
+//write your code here
+ML_STAR.End();";
+            OpenDocuments.Add(openDocument);
+            CurrentOpenDocument = openDocument;
+
+        }
+
+        /// <summary>
+        /// open document from path, if document if not csx, open it with system editor
+        /// </summary>
+        /// <param name="path"></param>
+        public void OpenDocument(string path)
+        {
+            if (!Path.IsPathRooted(path))
+                path = Path.Combine(DocumentRoot.Path, path);
+            foreach (var d in OpenDocuments)
+            {
+                if (d.Document != null && d.Document.Path == path)
+                {
+                    CurrentOpenDocument = d;
+                    OnPropertyChanged(nameof(CurrentOpenDocument));
+                    return;
+                }
+            }
+            if (path.EndsWith(".csx", StringComparison.OrdinalIgnoreCase))
+            {
+                var document = DocumentViewModel.FromPath(path);
+                OpenDocument(document);
+            }
+            else
+            {
+                Process.Start(path);
+            }
+        }
+        protected override ImmutableArray<Assembly> CompositionAssemblies => base.CompositionAssemblies
+            .Add(Assembly.Load(new AssemblyName("RoslynPad.Roslyn.Windows")))
+            .Add(Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows")));
+        protected override ImmutableArray<Type> TypeNamespaceImports => base.TypeNamespaceImports
+            .Add(typeof(Huarui.STARLine.STARCommand));
+
+
         public override void EditUserDocumentPath()
         {
             base.EditUserDocumentPath();
@@ -66,8 +115,9 @@ namespace RoslynPad
                         AddIgnore();
                     }
                 }
-            }catch { }
-            IsGitInited = repository!=null;
+            }
+            catch { }
+            IsGitInited = repository != null;
         }
         string GetGitPath(string name)
         {
@@ -75,54 +125,6 @@ namespace RoslynPad
                 return new DirectoryInfo(name).Parent.FullName;
             return name;
         }
-        public override void CreateNewDocument()
-        {
-            var openDocument = GetOpenDocumentViewModel(null);
-            openDocument.DefaultCode = @"var ML_STAR=new STARCommand();
-//ML_STAR.Init(@""C:\Program Files(x86)\HAMILTON\Methods\Test\SystemEditor3d.lay"", 0, true);
-ML_STAR.Init(true);
-//ML_STAR.Show3DSystemView();//show 3D deck layout
-ML_STAR.Start();
-ML_STAR.Initialize();
-//write your code here
-ML_STAR.End();";
-            OpenDocuments.Add(openDocument);
-            CurrentOpenDocument = openDocument;
-            
-        }
-        /// <summary>
-        /// open document from path, if document if not csx, open it with system editor
-        /// </summary>
-        /// <param name="path"></param>
-        public void OpenDocument(string path)
-        {
-            if (!Path.IsPathRooted(path))
-                path = Path.Combine(DocumentRoot.Path, path);
-            foreach(var d in OpenDocuments)
-            {
-                if(d.Document!=null && d.Document.Path==path)
-                {
-                    CurrentOpenDocument = d;
-                    OnPropertyChanged(nameof(CurrentOpenDocument));
-                    return;
-                }
-            }
-            if(path.EndsWith(".csx", StringComparison.OrdinalIgnoreCase))
-            {
-                var document = DocumentViewModel.FromPath(path);
-                OpenDocument(document);
-            }
-            else
-            {
-                Process.Start(path);
-            }
-        }
-        protected override ImmutableArray<Assembly> CompositionAssemblies => base.CompositionAssemblies
-            .Add(Assembly.Load(new AssemblyName("RoslynPad.Roslyn.Windows")))
-            .Add(Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows")));
-        protected override ImmutableArray<Type> TypeNamespaceImports => base.TypeNamespaceImports
-            .Add(typeof(Huarui.STARLine.STARCommand));
-
         public async Task InitGit()
         {
             await Task.Run(() =>
@@ -208,9 +210,9 @@ ML_STAR.End();";
             if (repository != null)
             {
                 GitBranchHistoryViewModel vm = new GitBranchHistoryViewModel();
-                foreach(var i in repository.Commits)
+                foreach (var i in repository.Commits)
                 {
-                    vm.Commits.Add(new CommitItem(i.Id+"", i.Committer.When.DateTime, i.Committer.Name, i.MessageShort));
+                    vm.Commits.Add(new CommitItem(i.Id + "", i.Committer.When.DateTime, i.Committer.Name, i.MessageShort));
                 }
                 if (vm.Commits.Count == 0) return;
                 vm.MainViewModel = this;
@@ -225,23 +227,23 @@ ML_STAR.End();";
             GitBranchHistoryViewModel vm = new GitBranchHistoryViewModel();
             vm.Type = BranchHistoryType.File;
             vm.FilePath = path;
-            foreach(var i in repository.Commits)
+            foreach (var i in repository.Commits)
             {
                 Tree commitTree = i.Tree;
                 var parentCommit = i.Parents.FirstOrDefault();
                 if (parentCommit == null)
                 {
                     var record = i.Tree[path];
-                    if(record!=null)
+                    if (record != null)
                         vm.Commits.Add(new CommitItem(i.Id + "", i.Committer.When.DateTime, i.Committer.Name, i.MessageShort));
                 }
                 else
                 {
                     Tree parentCommitTree = parentCommit.Tree;
-                    var changes= repository.Diff.Compare<TreeChanges>(parentCommitTree, commitTree);
-                    foreach(var c in changes)
+                    var changes = repository.Diff.Compare<TreeChanges>(parentCommitTree, commitTree);
+                    foreach (var c in changes)
                     {
-                        if(c.Status!= ChangeKind.Deleted && c.Path==path)
+                        if (c.Status != ChangeKind.Deleted && c.Path == path)
                             vm.Commits.Add(new CommitItem(i.Id + "", i.Committer.When.DateTime, i.Committer.Name, i.MessageShort));
                     }
                 }
@@ -375,7 +377,7 @@ ML_STAR.End();";
             document.Children.Clear();
             foreach (var i in changes.Children)
                 document.Children.Add(i);
-            if(document.Children.Count==0) await CloseDocument(document);
+            if (document.Children.Count == 0) await CloseDocument(document);
         }
         private GitChangesViewModel GetChanges(Repository repo)
         {
@@ -386,15 +388,15 @@ ML_STAR.End();";
             foreach (var i in changes)
             {
                 string path = Path.GetDirectoryName(i.Path);
-                if(string.IsNullOrEmpty(path))
-                    models.Children.Add(new GitChangesViewModel(i.Path, (i.Status+"").Substring(0,1)));
+                if (string.IsNullOrEmpty(path))
+                    models.Children.Add(new GitChangesViewModel(i.Path, (i.Status + "").Substring(0, 1)));
                 else
                 {
                     var pathModel = models;
                     var paths = path.Split('\\', '/');
-                    foreach(var p in paths)
+                    foreach (var p in paths)
                     {
-                        GitChangesViewModel? child=null;
+                        GitChangesViewModel? child = null;
                         foreach (var c in pathModel.Children)
                         {
                             if (c.IsFolder && c.Name == p)
@@ -403,7 +405,7 @@ ML_STAR.End();";
                         if (child == null)
                         {
                             child = new GitChangesViewModel(p, "", true);
-                            pathModel.Children.Insert(0,child);
+                            pathModel.Children.Insert(0, child);
                         }
                         pathModel = child;
                     }
@@ -414,14 +416,14 @@ ML_STAR.End();";
         }
         CommitChangesViewModel GetChanges(Tree tree, string path)
         {
-            CommitChangesViewModel models= new CommitChangesViewModel(path, "A");
-            foreach(var i in tree)
+            CommitChangesViewModel models = new CommitChangesViewModel(path, "A");
+            foreach (var i in tree)
             {
-                if(i.TargetType!= TreeEntryTargetType.Tree)
+                if (i.TargetType != TreeEntryTargetType.Tree)
                 {
                     models.Children.Add(new CommitChangesViewModel(i.Path, "A"));
                 }
-                else if(i.Target is Tree t)
+                else if (i.Target is Tree t)
                 {
                     models.Children.Add(GetChanges(t, i.Path));
                 }
@@ -436,7 +438,7 @@ ML_STAR.End();";
             var parentCommit = commit.Parents.FirstOrDefault();
             if (parentCommit == null)
             {
-                models = GetChanges(commitTree,"");
+                models = GetChanges(commitTree, "");
                 models.CommitId = commit.Id + "";
                 return models;
             }
@@ -463,7 +465,7 @@ ML_STAR.End();";
                         if (child == null)
                         {
                             child = new CommitChangesViewModel(p, "", true);
-                            pathModel.Children.Insert(0,child);
+                            pathModel.Children.Insert(0, child);
                         }
                         pathModel = child;
                     }
@@ -475,7 +477,7 @@ ML_STAR.End();";
 
         public void Dispose()
         {
-            if(repository!=null)
+            if (repository != null)
             {
                 repository.Dispose();
                 repository = null;

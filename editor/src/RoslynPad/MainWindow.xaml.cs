@@ -34,13 +34,12 @@ namespace RoslynPad
         internal MainWindow()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
-            AllocConsole();
+            //AllocConsole();
             Loaded += OnLoaded;
 
             var container = new ContainerConfiguration()
                 .WithAssembly(typeof(MainViewModelBase).Assembly)   // RoslynPad.Common.UI
-                .WithAssembly(typeof(MainWindow).Assembly)        // RoslynPad
-                ;
+                .WithAssembly(typeof(MainWindow).Assembly);         // RoslynPad
             var locator = container.CreateContainer().GetExport<IServiceProvider>();
 
             _viewModel = locator.GetService<MainViewModelBase>();
@@ -51,7 +50,7 @@ namespace RoslynPad
             DocumentsPane.CanClose = false;
             DockingManager.Theme = new VS2010Theme();
             LoadWindowLayout();
-            LoadDockLayout();
+            //LoadDockLayout();
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -167,7 +166,6 @@ namespace RoslynPad
         {
             e.Cancel = true;
             var document = (IOpenDocumentViewModel)e.Document.Content;
-            if (document == null) return;
             await _viewModel.CloseDocument(document).ConfigureAwait(false);
         }
 

@@ -106,10 +106,10 @@ namespace RoslynPad
                     if (MessageBox.Show("Are you sure to delete this file?", "delete confirm", MessageBoxButton.OKCancel, MessageBoxImage.Question)
                         != MessageBoxResult.OK)
                         return;
-                    for(int i=0;i<_viewModel.OpenDocuments.Count;i++)
+                    for (int i = 0; i < _viewModel.OpenDocuments.Count; i++)
                     {
                         var doc = _viewModel.OpenDocuments[i];
-                        if (doc.Document!=null && doc.Document.Path == documentViewModel.Path)
+                        if (doc.Document != null && doc.Document.Path == documentViewModel.Path)
                         {
                             await _viewModel.CloseDocument(doc);
                             break;

@@ -53,6 +53,7 @@ namespace RoslynPad.Hosting
                     runtime.Add(element);
                 }
             }
+
             var startup = new XElement("startup", new XAttribute("useLegacyV2RuntimeActivationPolicy", "true"));
             var config = new XElement("System.Windows.Forms.ApplicationConfigurationSection",
                 new XElement("add", new XAttribute("key", "DpiAwareness"), new XAttribute("value", "PerMonitorV2")),
