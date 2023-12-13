@@ -25,21 +25,16 @@
     <None Remove="Resources\gitcommit.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\STARLine\bin\Release\Huarui.STARLine.xml" Link="Huarui.STARLine.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\.gitignore" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\STARLine\STARLine.csproj" />
     <ProjectReference Include="..\RoslynPad.Common.UI\RoslynPad.Common.UI.csproj" />
     <ProjectReference Include="..\RoslynPad.Hosting\RoslynPad.Hosting.csproj" />
     <ProjectReference Include="..\RoslynPad.Editor.Windows\RoslynPad.Editor.Windows.csproj" />
+    <ProjectReference Include="..\RoslynPad.Plugin\RoslynPad.Plugin.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AvalonLibrary" Version="2.3.0" />

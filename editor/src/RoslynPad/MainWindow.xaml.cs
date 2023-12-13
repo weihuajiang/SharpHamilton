@@ -22,10 +22,6 @@ namespace RoslynPad
     /// </summary>
     public partial class MainWindow
     {
-        [DllImport("kernel32.dll")]
-        public static extern Boolean AllocConsole();
-        [DllImport("kernel32.dll")]
-        public static extern Boolean FreeConsole();
         private readonly MainViewModelBase _viewModel;
         private bool _isClosing;
         private bool _isClosed;
@@ -34,7 +30,6 @@ namespace RoslynPad
         internal MainWindow()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
-            //AllocConsole();
             Loaded += OnLoaded;
 
             var container = new ContainerConfiguration()

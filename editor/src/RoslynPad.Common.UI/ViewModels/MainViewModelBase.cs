@@ -401,6 +401,7 @@ namespace RoslynPad.UI
             OpenDocuments.Remove(document);
             document.Close();
             if (document is IDisposable t) t.Dispose();
+            GC.Collect();
         }
 
         public async Task AutoSaveOpenDocuments()

@@ -88,6 +88,20 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
+    <DrawingImage x:Key="Stop">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF"
+                                     Geometry="F1M16,16L0,16 0,0 16,0z" />
+                    <GeometryDrawing Brush="#FFF6F6F6"
+                                     Geometry="F1M13,13L3,13 3,3 13,3z" />
+                    <GeometryDrawing Brush="#FFA1260D"
+                                     Geometry="F1M12,12L4,12 4,4 12,4z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
 
     <DrawingImage x:Key="Folder">
         <DrawingImage.Drawing>

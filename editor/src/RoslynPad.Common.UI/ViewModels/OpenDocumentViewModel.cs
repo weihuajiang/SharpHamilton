@@ -628,11 +628,13 @@ namespace RoslynPad.UI
                 }
             }
         }
-
+        public static Action<string>? TaskBeforeRun { get; set; }
+        public static Action<string>? TaskAfterRun { get; set; }
         private async Task Run()
         {
             if (IsRunning) return;
-
+            if (TaskBeforeRun != null)
+                TaskBeforeRun(BuildPath);
             Reset();
 
             await MainViewModel.AutoSaveOpenDocuments().ConfigureAwait(true);
@@ -672,6 +674,8 @@ namespace RoslynPad.UI
             {
                 SetIsRunning(false);
             }
+            if (TaskAfterRun != null)
+                TaskAfterRun(BuildPath);
         }
 
         private void StartExec()

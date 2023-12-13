@@ -18,7 +18,7 @@ namespace RoslynPad.Roslyn.Scripting
     /// <summary>
     /// Provides an alternative to the <see cref="Script"/> class that also emits PDBs.
     /// </summary>
-    public sealed class ScriptRunner
+    public sealed class ScriptRunner : IDisposable
     {
         private static readonly string _globalAssemblyNamePrefix = "\u211B\u2118-" + Guid.NewGuid() + "-";
         private static int _assemblyNumber;
@@ -61,7 +61,10 @@ namespace RoslynPad.Roslyn.Scripting
                                  ? new SourceFileResolver(ImmutableArray<string>.Empty, workingDirectory)
                                  : SourceFileResolver.Default);
         }
-
+        public void Dispose()
+        {
+            SyntaxTrees?.Clear();
+        }
         public string? Code { get; }
         public ImmutableList<SyntaxTree>? SyntaxTrees { get; }
         public OutputKind OutputKind { get; }

@@ -369,4 +369,5 @@ FodyWeavers.xsd
 #RoslynPad
 RoslynPad.json
 *.autosave.csx
+*.autosave.cs
 RoslynPad.nuget.config

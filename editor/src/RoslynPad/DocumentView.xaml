@@ -90,14 +90,14 @@
                     </Grid>
                 </Button>
                 <Button Command="{Binding RestartHostCommand, Mode=OneTime}"
-                        ToolTip="Restart host process (Shift+F5)"
-                        Content="{StaticResource Restart}" />
+                        ToolTip="Stop run process (Shift+F5)"
+                        Content="{StaticResource Stop}" />
                 <Separator />
                 <Button Command="{Binding SaveCommand, Mode=OneTime}"
                         ToolTip="Save (Ctrl+S)"
                         Content="{StaticResource Save}" />
                 <Button Command="{Binding OpenBuildPathCommand, Mode=OneTime}"
-                        ToolTip="Open Build Folder"
+                        ToolTip="Open Build Folder" Visibility="Visible"
                         Content="{StaticResource PackageFolder}" />
                 <Separator />
                 <Menu Background="Transparent"

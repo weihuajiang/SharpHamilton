@@ -223,6 +223,7 @@ namespace RoslynPad.Hosting
                     InitializeBuildPath(stop: false);
                 }
             }
+            GC.Collect();
         }
 
         private void Disassemble()

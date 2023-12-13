@@ -33,6 +33,16 @@ namespace RoslynPad
         public MainViewModel(IServiceProvider serviceProvider, ITelemetryProvider telemetryProvider, ICommandProvider commands, IApplicationSettings settings, NuGetViewModel nugetViewModel, DocumentFileWatcher documentFileWatcher) : base(serviceProvider, telemetryProvider, commands, settings, nugetViewModel, documentFileWatcher)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
+            OpenDocumentViewModel.TaskAfterRun = (s) =>
+            {
+                foreach (var i in App.Plugins)
+                    i.TaskAfterRun(s);
+            };
+            OpenDocumentViewModel.TaskBeforeRun = (s) =>
+            {
+                foreach (var i in App.Plugins)
+                    i.TaskBeforeRun(s);
+            };
             InitGitCommand = commands.CreateAsync(InitGit);
             CommitCommand = commands.Create(Commit);
             BrachHistoryCommand = commands.Create(ViewBranchHistory);
@@ -41,14 +51,11 @@ namespace RoslynPad
         public override void CreateNewDocument()
         {
             var openDocument = GetOpenDocumentViewModel(null);
-            openDocument.DefaultCode = @"var ML_STAR=new STARCommand();
-//ML_STAR.Init(@""C:\Program Files(x86)\HAMILTON\Methods\Test\SystemEditor3d.lay"", 0, true);
-ML_STAR.Init(true);
-//ML_STAR.Show3DSystemView();//show 3D deck layout
-ML_STAR.Start();
-ML_STAR.Initialize();
-//write your code here
-ML_STAR.End();";
+            foreach(var i in App.Plugins)
+            {
+                if(!string.IsNullOrEmpty(i.ScriptTemplate))
+                    openDocument.DefaultCode = i.ScriptTemplate;
+            }
             OpenDocuments.Add(openDocument);
             CurrentOpenDocument = openDocument;
 
@@ -84,8 +91,16 @@ ML_STAR.End();";
         protected override ImmutableArray<Assembly> CompositionAssemblies => base.CompositionAssemblies
             .Add(Assembly.Load(new AssemblyName("RoslynPad.Roslyn.Windows")))
             .Add(Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows")));
-        protected override ImmutableArray<Type> TypeNamespaceImports => base.TypeNamespaceImports
-            .Add(typeof(Huarui.STARLine.STARCommand));
+        protected override ImmutableArray<Type> TypeNamespaceImports
+        {
+            get
+            {
+                var types = base.TypeNamespaceImports;
+                foreach (var i in App.Plugins)
+                    types = types.AddRange(i.TypeNamespaceImports);
+                return types;
+            }
+        }
 
 
         public override void EditUserDocumentPath()
@@ -164,7 +179,7 @@ ML_STAR.End();";
             IsGitInited = true;
         }
         List<string> ignores = new List<string>()
-        {"*.autosave.csx", ".vs", "RoslynPad.json", "RoslynPad.nuget.config"
+        {"*.autosave.csx", "*.autosave.cs", ".vs", "RoslynPad.json", "RoslynPad.nuget.config"
         };
         void LoadIgnore()
         {
