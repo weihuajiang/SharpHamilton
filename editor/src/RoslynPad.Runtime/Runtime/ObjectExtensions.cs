@@ -7,7 +7,7 @@ using RoslynPad.Annotations;
 namespace RoslynPad.Runtime
 {
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-    public static class ObjectExtensions
+    internal static class ObjectExtensions
     {
         public static T Dump<T>(this T o, string? header = null, int maxDepth = DumpQuotas.DefaultMaxDepth, int maxExpandedDepth = DumpQuotas.DefaultMaxExpandedDepth, int maxEnumerableLength = DumpQuotas.DefaultMaxEnumerableLength, int maxStringLength = DumpQuotas.DefaultMaxStringLength)
         {

@@ -10,7 +10,7 @@ namespace RoslynPad.Runtime
     /// <summary>
     /// RoslynPad runtime helpers.
     /// </summary>
-    public static class Helpers
+    internal static class Helpers
     {
         private static readonly Lazy<Task<SynchronizationContext>> _dispatcherTask = new Lazy<Task<SynchronizationContext>>(CreateWpfDispatcherAsync);
 

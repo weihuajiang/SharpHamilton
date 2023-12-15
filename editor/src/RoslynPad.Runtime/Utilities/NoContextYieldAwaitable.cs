@@ -11,7 +11,7 @@ namespace RoslynPad.Utilities
     /// <summary>
     /// Yields to the thread-pool.
     /// </summary>
-    public readonly struct NoContextYieldAwaitable
+    internal readonly struct NoContextYieldAwaitable
     {
         public NoContextYieldAwaiter GetAwaiter() { return new NoContextYieldAwaiter(); }
 
