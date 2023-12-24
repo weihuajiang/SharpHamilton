@@ -39,7 +39,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>key.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hamilton.Interop.HxCfgFil, Version=4.4.0.7740, Culture=neutral, PublicKeyToken=2dc916514a2d1b53, processorArchitecture=MSIL">
@@ -150,6 +150,8 @@
     <Compile Include="StepRunData.cs" />
     <Compile Include="StepStatusEnum.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="Venus6\CollisionControl.cs" />
+    <Compile Include="Venus6\IHxCommandRun7.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="HamHeaterShakerUSBLib">
@@ -199,7 +201,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="key.pfx" />
+    <None Include="key.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

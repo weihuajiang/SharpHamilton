@@ -357,14 +357,14 @@ namespace Huarui.STARLine
             pt.MixVolume = parameter.AdvancedParameters.MixVolume;
             if (parameter is LLDsParameter)
             {
-                pt.cLLDSensitivity = (parameter as LLDsParameter).cLLDSensitivity;
-                pt.pLLDSensitivity = (parameter as LLDsParameter).pLLDSensitivity;
+                pt.cLLDSensitivity = (parameter as LLDsParameter).CLLDSensitivity;
+                pt.pLLDSensitivity = (parameter as LLDsParameter).PLLDSensitivity;
                 pt.SubmergeDepth = (parameter as LLDsParameter).SubmergeDepth;
                 pt.MaxHeightDifference = (parameter as LLDsParameter).MaxHeightDifference;
             }
             else if (parameter is CLLDParameter)
             {
-                pt.cLLDSensitivity = (parameter as CLLDParameter).cLLDSensitivity;
+                pt.cLLDSensitivity = (parameter as CLLDParameter).CLLDSensitivity;
                 pt.SubmergeDepth = (parameter as CLLDParameter).SubmergeDepth;
             }
             else if (parameter is FixHeightParameter)

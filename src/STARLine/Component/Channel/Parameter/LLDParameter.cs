@@ -15,7 +15,7 @@ namespace Huarui.STARLine
         /// cLLD sensitivity
         /// if cLLD sensitivity was not off, the submerage depth will be used
         /// </summary>
-        public LLDSensitivity cLLDSensitivity
+        public LLDSensitivity CLLDSensitivity
         {
             get; set;
         } = LLDSensitivity.LabwareDefinition;
@@ -45,7 +45,7 @@ namespace Huarui.STARLine
         /// cLLD sensitivity
         /// if cLLD sensitivity was not off, the submerage depth will be used
         /// </summary>
-        public LLDSensitivity cLLDSensitivity
+        public LLDSensitivity CLLDSensitivity
         {
             get; set;
         } = LLDSensitivity.LabwareDefinition;
@@ -53,7 +53,7 @@ namespace Huarui.STARLine
         /// <summary>
         /// pLLD sensitivity, it is only supported pipetting channel, not 96 head and it is only for aspiration, not dispense
         /// </summary>
-        public LLDSensitivity pLLDSensitivity
+        public LLDSensitivity PLLDSensitivity
         {
             get; set;
         } = LLDSensitivity.Off;

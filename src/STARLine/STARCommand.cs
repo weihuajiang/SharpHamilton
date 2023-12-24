@@ -495,6 +495,12 @@ namespace Huarui.STARLine
         }
         private void InitImpl(DeckLayout deck, int cmdRunHwnd, HxSimulationModes mode, string runName = "VenusWrapper")
         {
+            try
+            {
+                var collsion = new Hamilton.Interop.Venus6.CollisionControlResetter();
+                collsion.InitializeCollisionControl(trace, new Hamilton.Interop.Venus6.CollisionAvoidanceSystemCallback());
+            }
+            catch { }
             if (cmdRunHwnd <= 0)
                 cmdRunHwnd = Util.GetForegroundWindow();
             if(cmdRunHwnd<=0)
@@ -531,7 +537,39 @@ namespace Huarui.STARLine
             starEvent.OnMethodEnded += StarEvent_OnMethodEnded;
             starEvent.OnControlPanelComplete += StarEvent_OnControlPanelComplete;
 
-            MlSTAR.InitCommandRun(RunName, runId, cmdRunCfgFil, trace, HxInstrumentDeck, dbTracking,
+            if (MlSTAR is IHxGruCommandRun7 star7)
+            {
+                star7.InitCommandRun(runName, runId, configFile, trace, HxInstrumentDeck, dbTracking,
+                    cmdRunHwnd, InstrumentName, mode, null);
+                //setup Waste16 sequence for Vantage 
+                try
+                {
+                    object seqc = new object();
+                    HxInstrumentDeck.Sequence("Waste16", ref seqc);
+                }
+                catch
+                {
+                    var waste = CoreGripper.FindCoreGripper(Deck, "MlStarIsDefaultWasteRack", 1);
+                    if (waste != null)
+                    {
+                        IEditSequence2 q = new Sequence() as IEditSequence2;
+                        int index = 0;
+                        var cnts = waste.All();
+                        foreach (var c in cnts)
+                        {
+                            HxPars param = new HxPars();
+                            param.Add(index, "Labwr_Item", null, null, null, null, null, null, null, null, null);
+                            param.Add(c.Labware, "Labwr_Id", null, null, null, null, null, null, null, null, null);
+                            param.Add(c.Position, "Labwr_PosId", null, null, null, null, null, null, null, null, null);
+                            index++;
+                            q.AppendItem(param);
+                        }
+                        HxInstrumentDeck.SaveSequence("Waste16", q);
+                    }
+                }
+            }
+            else
+                MlSTAR.InitCommandRun(RunName, runId, cmdRunCfgFil, trace, HxInstrumentDeck, dbTracking,
                     cmdRunHwnd, InstrumentName, mode);
             MlSTAR.SetEventIdentifier(1);
             //Load All steps

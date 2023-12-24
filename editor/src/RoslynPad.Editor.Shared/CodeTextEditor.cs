@@ -202,7 +202,7 @@ namespace RoslynPad.Editor
 
             if (_toolTip == null)
             {
-                _toolTip = new ToolTip { MaxWidth = 400 };
+                _toolTip = new ToolTip { MaxWidth = 800 };
                 InitializeToolTip();
             }
 
@@ -211,6 +211,8 @@ namespace RoslynPad.Editor
                 _toolTip.SetContent(this, new TextBlock
                 {
                     Text = stringContent,
+                    FontFamily=this.FontFamily,
+                    FontSize=this.FontSize,
                     TextWrapping = TextWrapping.Wrap
                 });
             }
@@ -219,9 +221,11 @@ namespace RoslynPad.Editor
                 _toolTip.SetContent(this, new ContentPresenter
                 {
                     Content = args.ContentToShow,
-                    MaxWidth = 400
+                    MaxWidth = 800
                 });
             }
+            _toolTip.FontFamily = this.FontFamily;
+            _toolTip.FontSize = this.FontSize;
 
             e.Handled = true;
             _toolTip.Open(this);

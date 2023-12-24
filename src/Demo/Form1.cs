@@ -36,8 +36,8 @@ namespace Demo
             ML_STAR.Log = Console.Out;
             var labPath = STARRegistry.LabwarePath;
             ML_STAR.Init(this.Handle.ToInt32(), simulation);
-            //ML_STAR.Init3DSystemView(panel1.Handle.ToInt32());
-            ML_STAR.Show3DSystemView();
+            ML_STAR.Init3DSystemView(panel1.Handle.ToInt32());
+            //ML_STAR.Show3DSystemView();
             Task.Run(() =>
             {
                 ML_STAR.Start();
@@ -56,7 +56,7 @@ namespace Demo
                 ML_STAR.Channel.PickupTip(tips);
 
                 //aspiration
-                var aspParam = new LLDsParameter() { cLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
+                var aspParam = new LLDsParameter() { CLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
                 aspParam.LiquidClassParameter.TipType = CoreTipType.HighVolumeTip;
                 aspParam.LiquidClassParameter.DispenseMode = DispenseMode.JetEmpty;
                 aspParam.LiquidClassParameter.LiquidClass = "HighVolume_Water_DispenseJet_Empty";
@@ -133,7 +133,7 @@ namespace Demo
                         }
                         ML_STAR.Channel.PickupTip(usedTips);
                         //aspiration
-                        var aspParam = new LLDsParameter() { cLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
+                        var aspParam = new LLDsParameter() { CLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
                         aspParam.LiquidClassParameter.TipType = CoreTipType.HighVolumeTip;
                         aspParam.LiquidClassParameter.DispenseMode = DispenseMode.JetEmpty;
                         aspParam.LiquidClassParameter.LiquidClass = "HighVolume_Water_DispenseJet_Empty";

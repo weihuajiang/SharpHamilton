@@ -5,9 +5,7 @@ C# library to control Hamilton STAR line.
 
 With SharpHamilton, application which used Hamilton STAR line can be developed with totally C# code, instead of method/hsl and C# code of application software. Which can make programming and maintenance much easier.
 
-
->**Limitation**
->This library was only tested in Venus 4.4.
+SharpHamilton support Venus 4.4 to 6, it also support Vantage in Venus 6.
 
 >**Disclaimer**
 >SharpHamilton is not officially endorsed or supported by the Hamilton Company. Please used it for test only.
@@ -30,7 +28,7 @@ To simplify application development with Hamilton STAR line. [Read more](WHY.md)
 
 ## Features
 
-* Control STARlet/STAR/STAR plus with pure C# code
+* Control STARlet/STAR/STAR/Vantage plus with pure C# code
 * No dependency without method or hsl file
 * Support venus-styled error handling
 * Support fully manipulation of deck layout, rack and container
