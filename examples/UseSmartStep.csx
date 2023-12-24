@@ -15,7 +15,7 @@ plate1.End = 37;
 string liquidClass = "StandardVolume_Water_DispenseJet_Part";
 LLDsParameter parameter = new LLDsParameter()
 {
-    cLLDSensitivity = LLDSensitivity.LabwareDefinition,
+    CLLDSensitivity = LLDSensitivity.LabwareDefinition,
     SubmergeDepth = 2,
     LiquidClassParameter = new LiquidClassParameter(CoreTipType.StandardVolumeTipFiltered, DispenseMode.JetPart, liquidClass)
 };

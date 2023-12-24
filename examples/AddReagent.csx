@@ -9,7 +9,7 @@ var plate1 = ML_STAR.Deck["Plate1"];
 var reagent = ML_STAR.Deck["Reagent1"];
 
 string liquidClass = "StandardVolume_Water_AliquotDispenseJet_Part";
-LLDsParameter parameter = new LLDsParameter() { cLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
+LLDsParameter parameter = new LLDsParameter() { CLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
 parameter.LiquidClassParameter.TipType = CoreTipType.StandardVolumeTip;
 parameter.LiquidClassParameter.DispenseMode = DispenseMode.JetPart;
 parameter.LiquidClassParameter.LiquidClass = liquidClass;

@@ -9,7 +9,7 @@ var plate1 = ML_STAR.Deck["Plate1"];
 var plate2 = ML_STAR.Deck["Plate2"];
 
 string liquidClass = "StandardVolume_Water_DispenseJet_Empty";
-LLDsParameter parameter = new LLDsParameter() { cLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
+LLDsParameter parameter = new LLDsParameter() { CLLDSensitivity = LLDSensitivity.LabwareDefinition, SubmergeDepth = 2 };
 parameter.LiquidClassParameter.TipType = CoreTipType.StandardVolumeTip;
 parameter.LiquidClassParameter.DispenseMode = DispenseMode.JetEmpty;
 parameter.LiquidClassParameter.LiquidClass = liquidClass;
