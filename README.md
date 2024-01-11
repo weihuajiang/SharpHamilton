@@ -12,8 +12,7 @@ SharpHamilton support Venus 4.4 to 6, it also support Vantage in Venus 6.
 
 ## Test it in RoslynPad
 
-We integrated this tool to [RoslynPad](https://github.com/roslynpad/roslynpad), you can write C# script to control STAR/STARlet/STARplus, please download it from following [link](https://weihuajiang.github.io/LabAutomation/RoslynPad.zip)
-or [windows store](https://www.microsoft.com/store/apps/9NJ44NZKHBXP)
+We integrated this tool to [RoslynPad](https://github.com/roslynpad/roslynpad), you can write C# script to control STAR/STARlet/STARplus, please download it from following [link](https://github.com/weihuajiang/SharpHamilton/releases/download/v0.3.0/Release.zip).
 
 ![image](https://github.com/weihuajiang/SharpHamilton/assets/12489873/be7b9ebe-9753-45d1-b208-dbb90d9f0520)
 
@@ -34,7 +33,8 @@ To simplify application development with Hamilton STAR line. [Read more](WHY.md)
 * Support fully manipulation of deck layout, rack and container
 * Low cost and high performance for no HxRun running and no inter process communiation between application and COM in HxRun
 * Support sequence and smart step, you can write venus styled script
-* Run in windows xp/7/10/11
+* Support venus from 4.4 to 6
+* Support windows xp/7/10/11
 
 ## Progress
 * **Deck layout**: labware manipulation and volume computation
@@ -42,7 +42,7 @@ To simplify application development with Hamilton STAR line. [Read more](WHY.md)
 * **Master Module**: Initialize, Door, Firmware, Query carrier presence on deck
 * **Arm**: movemet of dual arm
 * **Channel**: Tip pickup, tip eject, aspirate, dispense, move, get last liquid level, set tip tracking speed, get exclude state, wait for TADM upload, ADC/MAD control. Smart steps like venus were finished
-* **CORE-gripper** (under development)
+* **CORE-gripper** 
 * **Autoload** (under development)
 * **5ml Channel** (under development)
 * **5ml CORE-gripper** (under development)
