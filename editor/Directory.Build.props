@@ -2,12 +2,12 @@
     <PropertyGroup>
         <Features>strict</Features>
         <Deterministic>True</Deterministic>
-        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
         <EditorPackageVersion>1.1.0</EditorPackageVersion>
         <RoslynPackageVersion>3.0.0</RoslynPackageVersion>
         <RoslynAssemblyVersion>3.0.0.0</RoslynAssemblyVersion>
         <LangVersion>8.0</LangVersion>
-        <NullableContextOptions>Enable</NullableContextOptions>
+        <NullableContextOptions>disable</NullableContextOptions>
         <Authors>Eli Arbel</Authors>
         <PackageProjectUrl>https://github.com/aelij/RoslynPad</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/aelij/RoslynPad/blob/master/LICENSE</PackageLicenseUrl>

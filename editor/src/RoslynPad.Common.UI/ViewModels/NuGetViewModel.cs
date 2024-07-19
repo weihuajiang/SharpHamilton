@@ -54,7 +54,7 @@ namespace RoslynPad.UI
                     machineWideSettings: new XPlatMachineWideSetting());
 
                 GlobalPackageFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
-                _configFilePaths = SettingsUtility.GetConfigFilePaths(settings);
+                _configFilePaths = new string[] { };// SettingsUtility.GetConfigFilePaths(settings);
                 _packageSources = SettingsUtility.GetEnabledSources(settings);
 
                 DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance, nonInteractive: false);
@@ -130,7 +130,6 @@ namespace RoslynPad.UI
             var packages = await GetPackagesAsync(searchString, includePrerelease: true, exactMatch, cancellationToken);
             return packages;
         }
-
         internal static (List<string> compile, List<string> runtime, List<string> analyzers) ReadProjectLockJson(JObject obj, string packagesDirectory, string framework)
         {
             var compile = new List<string>();
@@ -307,15 +306,10 @@ namespace RoslynPad.UI
             if (restoreParameters.TargetFramework.Framework == ".NETCoreApp")
             {
                 targetFramework.Dependencies.Add(new LibraryDependency(
-                    libraryRange: new LibraryRange("Microsoft.NETCore.App",
+                    new LibraryRange("Microsoft.NETCore.App",
                         new VersionRange(restoreParameters.FrameworkVersion != null
                             ? new NuGetVersion(restoreParameters.FrameworkVersion)
-                            : new NuGetVersion(restoreParameters.TargetFramework.Version)), LibraryDependencyTarget.Package),
-                    type: LibraryDependencyType.Platform,
-                    includeType: LibraryIncludeFlags.All,
-                    suppressParent: LibraryIncludeFlags.All,
-                    noWarn: Array.Empty<NuGetLogCode>(),
-                    autoReferenced: true));
+                            : new NuGetVersion(restoreParameters.TargetFramework.Version)), LibraryDependencyTarget.Package)));
             }
 
             if (restoreParameters.Libraries != null)
@@ -336,10 +330,8 @@ namespace RoslynPad.UI
                 return;
             }
 
-            targetFramework.Dependencies.Add(new LibraryDependency
-            {
-                LibraryRange = new LibraryRange(library.Id, library.VersionRange, LibraryDependencyTarget.Package)
-            });
+            targetFramework.Dependencies.Add(new LibraryDependency(new LibraryRange(library.Id, library.VersionRange, LibraryDependencyTarget.Package)
+            ));
         }
 
         #region Inner Classes

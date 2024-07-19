@@ -88,11 +88,17 @@ ML_STAR.End();";
             var basePath = new FileInfo(typeof(STARLinePlugin).Assembly.Location).Directory.FullName;
             if (!Directory.Exists(buildPath))
                 Directory.CreateDirectory(buildPath);
+            var assemblyFileName = this.GetType().Assembly.GetName().Name;
             foreach (var f in Directory.EnumerateFiles(basePath))
             {
                 var target = Path.Combine(buildPath, new FileInfo(f).Name);
-                if (!File.Exists(target))
+                if (!File.Exists(target) && !target.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase)
+                    && !target.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                    && !target.EndsWith(assemblyFileName + ".dll", StringComparison.OrdinalIgnoreCase)
+                    && !target.EndsWith("RoslynPad.Plugin.dll", StringComparison.OrdinalIgnoreCase))
+                {
                     File.Copy(f, target);
+                }
             }
             foreach (var f in Directory.EnumerateDirectories(basePath))
             {
