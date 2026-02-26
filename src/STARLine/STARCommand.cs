@@ -931,8 +931,6 @@ namespace Huarui.STARLine
             object variables = new object();
             usedVariable.Add(cmd, HxAtsInstrumentParsKeys.global, HxAtsInstrumentParsKeys.order);
             usedVariable.Add(parameter, HxAtsInstrumentParsKeys.global, HxAtsInstrumentParsKeys.parameter);
-            //instanceId = Guid.NewGuid().ToString().Replace("-", "");
-            //SaveRunParameter(usedVariable, instanceId);
             string fwResult;
             try
             {
@@ -940,15 +938,13 @@ namespace Huarui.STARLine
                 if (Simulator != null && IsSimulation) fwTask = Simulator.SendFirmware(cmd, parameter);
                 ClearErrorForTask(taskId);
                 HxPars result = new HxPars();
-                MlSTAR.FirmwareCommand(usedVariable, result);
+                MlSTAR.firmwareCommand(usedVariable, result);
                 fwResult = result.Item2(HxCommandKeys.resultData, 4);
                 ReleaseComObject(result);
-                //StepRunCfg.DeleteDataDef("HxPars", instanceId);
                 if (fwTask != null) fwTask.Wait();
             }
             catch (Exception e)
             {
-                //StepRunCfg.DeleteDataDef("HxPars", instanceId);
                 ReleaseComObject(usedVariable);
                 ReleaseComObject(objBounds);
                 ModuleErrors errors = GetErrorTask(taskId);
